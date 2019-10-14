@@ -8,6 +8,8 @@ namespace Dappery.Domain.Entities
 
         public string State { get; set; }
 
-        public int ZipCode { get; set; }
+        public string ZipCode { get; set; }
+
+        public int BreweryId { get; set; }
     }
 }

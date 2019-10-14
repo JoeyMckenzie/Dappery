@@ -9,6 +9,7 @@ namespace Dappery.Domain.Entities
         Ipa,
         DoubleIpa,
         TripleIpa,
+        NewEnglandIpa,
         Stout
     }
 }
