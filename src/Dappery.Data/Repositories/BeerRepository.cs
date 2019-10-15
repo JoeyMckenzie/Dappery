@@ -35,7 +35,6 @@ namespace Dappery.Data.Repositories
                     beer.Brewery = brewery;
                     return beer;
                 },
-//                splitOn: "Id",
                 transaction: _dbTransaction
             );
         }
@@ -52,9 +51,8 @@ namespace Dappery.Data.Repositories
                     beer.Brewery = brewery;
                     return beer;
                 },
-//                splitOn: "Id",
-                param: new { Id = id },
-                transaction: _dbTransaction)).FirstOrDefault();
+                new { Id = id },
+                _dbTransaction)).FirstOrDefault();
 
             // Return back to the caller if no beer is found, let the business logic decide what to do if we can't the specified beer
             if (beerFromId == null)
@@ -65,8 +63,8 @@ namespace Dappery.Data.Repositories
             // Map the address to the beer's brewery
             var address = await _dbConnection.QueryFirstOrDefaultAsync<Address>(
                 @"SELECT * FROM Addresses WHERE BreweryId = @BreweryId",
-                param: new { BreweryId = beerFromId?.Brewery?.Id },
-                transaction: _dbTransaction);
+                new { BreweryId = beerFromId?.Brewery?.Id },
+                _dbTransaction);
 
             if (address != null && beerFromId.Brewery != null)
             {

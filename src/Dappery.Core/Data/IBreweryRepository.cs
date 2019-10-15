@@ -9,7 +9,5 @@ namespace Dappery.Core.Data
         Task<IEnumerable<Brewery>> GetAllBreweries();
         
         Task<Brewery> GetBreweryById(int id);
-
-        Task<Brewery> GetAddressFromBreweryId(int id);
     }
 }

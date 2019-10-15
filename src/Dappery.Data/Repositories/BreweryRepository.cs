@@ -21,28 +21,43 @@ namespace Dappery.Data.Repositories
 
         public async Task<Brewery> GetBreweryById(int id)
         {
-            return (await _dbConnection.QueryAsync(
-                @"SELECT * FROM Dappery.dbo.Breweries WHERE Id = @Id",
+            var beersFromBrewery = (await _dbConnection.QueryAsync<Beer>(
+                @"SELECT * FROM Beers WHERE BreweryId = @Id",
+                new {Id = id},
+                _dbTransaction)).ToList();
+            
+            return (await _dbConnection.QueryAsync<Brewery, Address, Brewery>(
+                @"SELECT br.*, a.* FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id WHERE br.Id = @Id",
+                (brewery, address) =>
+                {
+                    // Since breweries have a one-to-one relation with address, we can initialize that mapping here
+                    brewery.Address = address;
+                    
+                    // Add each beer from the previous query into the list of beers for the brewery
+                    if (beersFromBrewery.Any())
+                    {
+                        foreach (var beer in beersFromBrewery)
+                        {
+                            brewery.Beers.Add(beer);
+                        }
+                    }
+                    
+                    return brewery;
+                },
                 new { Id = id },
                 _dbTransaction)).FirstOrDefault();
         }
 
         public async Task<IEnumerable<Brewery>> GetAllBreweries()
         {
-            return await _dbConnection.QueryAsync<Brewery>(
-                "SELECT * FROM Dappery.dbo.Breweries",
+            return await _dbConnection.QueryAsync<Brewery, Address, Brewery>(
+                "SELECT * FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id",
+                (brewery, address) =>
+                {
+                    brewery.Address = address;
+                    return brewery;
+                },
                 transaction: _dbTransaction);
-        }
-
-        public async Task<Brewery> GetAddressFromBreweryId(int id)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@Id", id);
-
-            return (await _dbConnection.QueryAsync<Brewery>(
-                "GetAddressByBreweryId",
-                parameters,
-                commandType: CommandType.StoredProcedure)).FirstOrDefault();
         }
     }
 }

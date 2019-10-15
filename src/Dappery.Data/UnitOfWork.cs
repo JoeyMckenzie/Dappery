@@ -233,7 +233,7 @@ namespace Dappery.Data
                         'NewEnglandIpa',
                         CURRENT_DATE,
                         CURRENT_DATE,
-                        1
+                        2
                     );",
                 transaction: _dbTransaction);
         }
