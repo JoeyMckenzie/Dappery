@@ -1,5 +1,6 @@
 namespace Dappery.Data.Tests
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using Domain.Entities;
     using Shouldly;
@@ -8,9 +9,31 @@ namespace Dappery.Data.Tests
     public class BreweryRepositoryTest : TestFixture
     {
         [Fact]
-        public void GetAllBreweries_WhenInvokedAndBreweriesExist_ReturnsValidListOfBreweries()
+        public async Task GetAllBreweries_WhenInvokedAndBreweriesExist_ReturnsValidListOfBreweries()
         {
-            
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+
+            // Act
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+
+            // Assert
+            breweries.ShouldNotBeNull();
+            breweries.ShouldNotBeEmpty();
+            breweries.Count.ShouldBe(2);
+            breweries.All(br => br.Address != null).ShouldBeTrue();
+            breweries.All(br => br.Beers != null).ShouldBeTrue();
+            breweries.All(br => br.Beers.Any()).ShouldBeTrue();
+            breweries.FirstOrDefault(br => br.Name == "Fall River Brewery")?.Beers
+                .ShouldContain(b => b.Name == "Hexagenia");
+            breweries.FirstOrDefault(br => br.Name == "Fall River Brewery")?.Beers
+                .ShouldContain(b => b.Name == "Widowmaker");
+            breweries.FirstOrDefault(br => br.Name == "Fall River Brewery")?.Beers
+                .ShouldContain(b => b.Name == "Hooked");
+            breweries.FirstOrDefault(br => br.Name == "Sierra Nevada Brewing Company")?.Beers
+                .ShouldContain(b => b.Name == "Pale Ale");
+            breweries.FirstOrDefault(br => br.Name == "Sierra Nevada Brewing Company")?.Beers
+                .ShouldContain(b => b.Name == "Hazy Little Thing");
         }
         
         [Fact]

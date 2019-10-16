@@ -6,6 +6,8 @@ namespace Dappery.Domain.Entities
         
         public BeerStyle BeerStyle { get; set; }
 
+        public int BreweryId { get; set; }
+        
         public Brewery Brewery { get; set; }
     }
 }
