@@ -50,6 +50,8 @@ namespace Dappery.Data.Repositories
 
         public async Task<IEnumerable<Brewery>> GetAllBreweries()
         {
+            // Grab a reference to all beers to the 
+        
             return await _dbConnection.QueryAsync<Brewery, Address, Brewery>(
                 "SELECT * FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id",
                 (brewery, address) =>
