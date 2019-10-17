@@ -1,5 +1,6 @@
 namespace Dappery.Data.Tests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -68,6 +69,33 @@ namespace Dappery.Data.Tests
                 
             // Assert, validate a few properties
             beer.ShouldBeNull();
+        }
+        
+        [Fact]
+        public async Task CreateBeer_WhenBeerIsValid_ReturnsNewlyInsertedBeer()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            var beerToInsert = new Beer
+            {
+                Name = "Lazy Hazy",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                BreweryId = 1,
+                BeerStyle = BeerStyle.NewEnglandIpa
+            };
+            
+            // Act
+            var insertedBeer = await unitOfWork.BeerRepository.CreateBeer(beerToInsert);
+            
+            insertedBeer.ShouldNotBeNull();
+            insertedBeer.ShouldBeOfType<Beer>();
+            insertedBeer.Brewery.ShouldNotBeNull();
+            insertedBeer.Brewery.Address.ShouldNotBeNull();
+            insertedBeer.Brewery.Beers.ShouldNotBeEmpty();
+            insertedBeer.Brewery.Beers.Count.ShouldBe(4);
+            insertedBeer.Brewery.Beers.ShouldContain(b => b.Id == insertedBeer.Id);
+            insertedBeer.Brewery.Beers.FirstOrDefault(b => b.Id == insertedBeer.Id)?.Name.ShouldBe(beerToInsert.Name);
         }
     }
 }

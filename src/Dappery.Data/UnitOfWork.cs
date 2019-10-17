@@ -32,8 +32,8 @@ namespace Dappery.Data
             // Open our connection, begin our transaction, and instantiate our repositories
             _dbConnection.Open();
             _dbTransaction = _dbConnection.BeginTransaction();
-            BreweryRepository = new BreweryRepository(_dbTransaction);
-            BeerRepository = new BeerRepository(_dbTransaction);
+            BreweryRepository = new BreweryRepository(_dbTransaction, useSqlite);
+            BeerRepository = new BeerRepository(_dbTransaction, useSqlite);
 
             if (useSqlite)
             {

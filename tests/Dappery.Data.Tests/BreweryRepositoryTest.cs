@@ -1,5 +1,6 @@
 namespace Dappery.Data.Tests
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Domain.Entities;
@@ -68,6 +69,38 @@ namespace Dappery.Data.Tests
 
             // Assert
             brewery.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task CreateBrewery_WhenBreweryIsValid_ReturnsNewlyInsertedBrewery()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            var breweryToInsert = new Brewery
+            {
+                Name = "Bike Dog Brewing Company",
+                Address = new Address
+                {
+                    StreetAddress = "123 Sacramento St.",
+                    City = "Sacramento",
+                    State = "CA",
+                    ZipCode = "95811",
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+            
+            // Act
+            var insertedBrewery = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
+            
+            insertedBrewery.ShouldNotBeNull();
+            insertedBrewery.ShouldBeOfType<Brewery>();
+            insertedBrewery.Address.ShouldNotBeNull();
+            insertedBrewery.Address.StreetAddress.ShouldBe(breweryToInsert.Address.StreetAddress);
+            insertedBrewery.Address.BreweryId.ShouldBe(3);
+            insertedBrewery.Beers.ShouldBeEmpty();
         }
     }
 }

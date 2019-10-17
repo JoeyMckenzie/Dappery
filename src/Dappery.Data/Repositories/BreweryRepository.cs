@@ -3,6 +3,7 @@ namespace Dappery.Data.Repositories
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using Core.Data;
     using Dapper;
@@ -12,11 +13,13 @@ namespace Dappery.Data.Repositories
     {
         private readonly IDbTransaction _dbTransaction;
         private readonly IDbConnection _dbConnection;
+        private readonly bool _useSqlite;
 
-        public BreweryRepository(IDbTransaction dbTransaction)
+        public BreweryRepository(IDbTransaction dbTransaction, bool useSqlite)
         {
             _dbTransaction = dbTransaction;
             _dbConnection = _dbTransaction.Connection;
+            _useSqlite = useSqlite;
         }
 
         public async Task<Brewery> GetBreweryById(int id)
@@ -75,6 +78,41 @@ namespace Dappery.Data.Repositories
                     return brewery;
                 },
                 transaction: _dbTransaction);
+        }
+        
+        public async Task<Brewery> CreateBrewery(Brewery brewery)
+        {
+            // Grab a reference to the address
+            var address = brewery.Address;
+            var breweryInsertSql =
+                new StringBuilder(@"INSERT INTO Breweries (Name, CreatedAt, UpdatedAt) VALUES (@Name, @CreatedAt, @UpdatedAt);");
+            
+            // Based on our database implementation, we'll need a reference to the last row inserted
+            var lastRowIdSql = _useSqlite ? "SELECT last_insert_rowid();" : "SELECT CAST(SCOPE_IDENTITY() as int);";
+            
+            // Let's add the brewery
+            var breweryId = await _dbConnection.ExecuteScalarAsync<int>(
+                breweryInsertSql.Append(lastRowIdSql).ToString(),
+                new { brewery.Name, brewery.CreatedAt, brewery.UpdatedAt },
+                _dbTransaction);
+
+            // One of our business rules is that a brewery must have an associated address
+            await _dbConnection.ExecuteAsync(
+                @"INSERT INTO Addresses (StreetAddress, City, State, ZipCode, CreatedAt, UpdatedAt, BreweryId)
+                        VALUES (@StreetAddress, @City, @State, @ZipCode, @CreatedAt, @UpdatedAt, @BreweryId)",
+                new
+                {
+                    address.StreetAddress, 
+                    address.City,
+                    address.State,
+                    address.ZipCode,
+                    address.CreatedAt,
+                    address.UpdatedAt,
+                    BreweryId = breweryId
+                }, 
+                _dbTransaction);
+            
+            return await GetBreweryById(breweryId);
         }
     }
 }
