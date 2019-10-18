@@ -11,5 +11,7 @@ namespace Dappery.Core.Data
         Task<Brewery> GetBreweryById(int id);
 
         Task<Brewery> CreateBrewery(Brewery brewery);
+
+        Task<Brewery> UpdateBrewery(Brewery brewery, bool updateAddress = false);
     }
 }

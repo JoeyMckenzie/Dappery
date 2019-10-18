@@ -15,9 +15,13 @@ namespace Dappery.Data
 
         public UnitOfWork(bool useSqlite, string? connectionString)
         {
+            // Based on our database implementation, we'll need a reference to the last row inserted
+            string rowInsertRetrievalQuery = "SELECT CAST(SCOPE_IDENTITY() as int);"; 
+            
             if (useSqlite)
             {
                 _dbConnection = new SqliteConnection("Data Source=:memory:");
+                rowInsertRetrievalQuery = "SELECT last_insert_rowid();";
             }
             else
             {
@@ -32,8 +36,8 @@ namespace Dappery.Data
             // Open our connection, begin our transaction, and instantiate our repositories
             _dbConnection.Open();
             _dbTransaction = _dbConnection.BeginTransaction();
-            BreweryRepository = new BreweryRepository(_dbTransaction, useSqlite);
-            BeerRepository = new BeerRepository(_dbTransaction, useSqlite);
+            BreweryRepository = new BreweryRepository(_dbTransaction, rowInsertRetrievalQuery);
+            BeerRepository = new BeerRepository(_dbTransaction, rowInsertRetrievalQuery);
 
             if (useSqlite)
             {

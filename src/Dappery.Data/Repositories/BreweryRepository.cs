@@ -13,13 +13,13 @@ namespace Dappery.Data.Repositories
     {
         private readonly IDbTransaction _dbTransaction;
         private readonly IDbConnection _dbConnection;
-        private readonly bool _useSqlite;
+        private readonly string _rowInsertRetrievalQuery;
 
-        public BreweryRepository(IDbTransaction dbTransaction, bool useSqlite)
+        public BreweryRepository(IDbTransaction dbTransaction, string rowInsertRetrievalQuery)
         {
             _dbTransaction = dbTransaction;
             _dbConnection = _dbTransaction.Connection;
-            _useSqlite = useSqlite;
+            _rowInsertRetrievalQuery = rowInsertRetrievalQuery;
         }
 
         public async Task<Brewery> GetBreweryById(int id)
@@ -87,12 +87,9 @@ namespace Dappery.Data.Repositories
             var breweryInsertSql =
                 new StringBuilder(@"INSERT INTO Breweries (Name, CreatedAt, UpdatedAt) VALUES (@Name, @CreatedAt, @UpdatedAt);");
             
-            // Based on our database implementation, we'll need a reference to the last row inserted
-            var lastRowIdSql = _useSqlite ? "SELECT last_insert_rowid();" : "SELECT CAST(SCOPE_IDENTITY() as int);";
-            
             // Let's add the brewery
             var breweryId = await _dbConnection.ExecuteScalarAsync<int>(
-                breweryInsertSql.Append(lastRowIdSql).ToString(),
+                breweryInsertSql.Append(_rowInsertRetrievalQuery).ToString(),
                 new { brewery.Name, brewery.CreatedAt, brewery.UpdatedAt },
                 _dbTransaction);
 
@@ -113,6 +110,40 @@ namespace Dappery.Data.Repositories
                 _dbTransaction);
             
             return await GetBreweryById(breweryId);
+        }
+
+        public async Task<Brewery> UpdateBrewery(Brewery brewery, bool updateAddress)
+        {
+            // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
+            await _dbConnection.ExecuteAsync(
+                @"UPDATE Breweries SET Name = @Name, UpdatedAt = @UpdatedAt WHERE Id = @Id",
+                new
+                {
+                    brewery.Name,
+                    brewery.UpdatedAt,
+                    brewery.Id
+                },
+                _dbTransaction);
+
+            if (brewery.Address != null && updateAddress)
+            {
+                // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
+                // For now, we won't allow users to swap breweries address to another address
+                await _dbConnection.ExecuteAsync(
+                    @"UPDATE Addresses SET StreetAddress = @StreetAddress, City = @City, ZipCode = @ZipCode, State = @State, UpdatedAt = @UpdatedAt WHERE Id = @Id",
+                    new
+                    {
+                        brewery.Address.StreetAddress,
+                        brewery.Address.City,
+                        brewery.Address.ZipCode,
+                        brewery.Address.State,
+                        brewery.Address.UpdatedAt,
+                        brewery.Address.Id
+                    },
+                    _dbTransaction);
+            }
+            
+            return await GetBreweryById(brewery.Id);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace Dappery.Data.Tests
             brewery.Address.ShouldNotBeNull();
             brewery.Beers.ShouldNotBeNull();
             brewery.Beers.ShouldNotBeEmpty();   
-            brewery.Beers.Count.ShouldBe(3);
+            brewery.BeerCount.ShouldBe(3);
             brewery.Beers.ShouldContain(b => b.Name == "Hexagenia");
             brewery.Beers.ShouldContain(b => b.Name == "Widowmaker");
             brewery.Beers.ShouldContain(b => b.Name == "Hooked");
@@ -95,12 +95,84 @@ namespace Dappery.Data.Tests
             // Act
             var insertedBrewery = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
             
+            // Assert
             insertedBrewery.ShouldNotBeNull();
             insertedBrewery.ShouldBeOfType<Brewery>();
             insertedBrewery.Address.ShouldNotBeNull();
             insertedBrewery.Address.StreetAddress.ShouldBe(breweryToInsert.Address.StreetAddress);
             insertedBrewery.Address.BreweryId.ShouldBe(3);
             insertedBrewery.Beers.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public async Task UpdateBrewery_WhenBreweryIsValidAndAddressIsNotUpdated_ReturnsUpdatedBrewery()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            var breweryToUpdate = new Brewery
+            {
+                Id = 2,
+                Name = "Sierra Nevada Brewing Company Of Brewing",
+                Address = new Address
+                {
+                    StreetAddress = "1075 E 20th St",
+                    City = "Chico",
+                    State = "CA",
+                    ZipCode = "95928",
+                    UpdatedAt = DateTime.UtcNow,
+                    BreweryId = 2
+                },
+                UpdatedAt = DateTime.UtcNow
+            };
+            
+            // Act
+            var updatedBrewery = await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate);
+            
+            // Assert
+            updatedBrewery.ShouldNotBeNull();
+            updatedBrewery.ShouldBeOfType<Brewery>();
+            updatedBrewery.Address.ShouldNotBeNull();
+            updatedBrewery.Address.StreetAddress.ShouldBe(breweryToUpdate.Address.StreetAddress);
+            updatedBrewery.Address.BreweryId.ShouldBe(2);
+            updatedBrewery.Beers.ShouldNotBeNull();
+            updatedBrewery.Beers.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task UpdateBrewery_WhenBreweryIsValidAndAddressIsUpdated_ReturnsUpdatedBrewery()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            var breweryToUpdate = new Brewery
+            {
+                Id = 2,
+                Name = "Sierra Nevada Brewing Company Of Brewing",
+                Address = new Address
+                {
+                    Id = 2,
+                    StreetAddress = "123 Happy St.",
+                    City = "Redding",
+                    State = "CA",
+                    ZipCode = "96002",
+                    UpdatedAt = DateTime.UtcNow,
+                    BreweryId = 2
+                },
+                UpdatedAt = DateTime.UtcNow
+            };
+            
+            // Act
+            var updatedBrewery = await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, true);
+            
+            // Assert
+            updatedBrewery.ShouldNotBeNull();
+            updatedBrewery.ShouldBeOfType<Brewery>();
+            updatedBrewery.Address.ShouldNotBeNull();
+            updatedBrewery.Address.StreetAddress.ShouldBe(breweryToUpdate.Address.StreetAddress);
+            updatedBrewery.Address.ZipCode.ShouldBe(breweryToUpdate.Address.ZipCode);
+            updatedBrewery.Address.City.ShouldBe(breweryToUpdate.Address.City);
+            updatedBrewery.Address.BreweryId.ShouldBe(2);
+            updatedBrewery.Beers.ShouldNotBeNull();
+            updatedBrewery.Beers.ShouldNotBeEmpty();
         }
     }
 }

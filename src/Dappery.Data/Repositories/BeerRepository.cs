@@ -13,13 +13,13 @@ namespace Dappery.Data.Repositories
     {
         private readonly IDbTransaction _dbTransaction;
         private readonly IDbConnection _dbConnection;
-        private readonly bool _useSqlite;
+        private readonly string _insertRowRetrievalQuery;
     
-        public BeerRepository(IDbTransaction dbTransaction, bool useSqlite)
+        public BeerRepository(IDbTransaction dbTransaction, string insertRowRetrievalQuery)
         {
             _dbTransaction = dbTransaction;
             _dbConnection = _dbTransaction.Connection;
-            _useSqlite = useSqlite;
+            _insertRowRetrievalQuery = insertRowRetrievalQuery;
         }
         
         public async Task<IEnumerable<Beer>> GetAllBeers()
@@ -94,12 +94,9 @@ namespace Dappery.Data.Repositories
             var beerToInsertSql = new StringBuilder(@"INSERT INTO Beers (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
                                         VALUES (@Name, @BeerStyle, @CreatedAt, @UpdatedAt, @BreweryId);");
             
-            // Based on our database implementation, we'll need a reference to the last row inserted
-            var lastRowIdSql = _useSqlite ? "SELECT last_insert_rowid();" : "SELECT CAST(SCOPE_IDENTITY() as int);";
-
             // Let's insert the beer and grab its ID
             var beerId = await _dbConnection.ExecuteScalarAsync<int>(
-                beerToInsertSql.Append(lastRowIdSql).ToString(),
+                beerToInsertSql.Append(_insertRowRetrievalQuery).ToString(),
                 new
                 {
                     beer.Name,
@@ -112,6 +109,27 @@ namespace Dappery.Data.Repositories
             
             // Finally, we'll return the newly inserted beer
             return await GetBeerById(beerId);
+        }
+
+        public async Task<Beer> UpdateBeer(Beer beer)
+        {
+            // Our application layer will be in charge of mapping the new properties to the entity layer,
+            // as well as validating that the beer exists, so the data layer will only be responsible for
+            // inserting the values into the database; separation of concerns!
+            await _dbConnection.ExecuteAsync(
+                @"UPDATE Beers SET Name = @Name, BeerStyle = @BeerStyle, UpdatedAt = @UpdatedAt, BreweryId = @BreweryId WHERE Id = @Id",
+                new
+                {
+                    beer.Name,
+                    beer.BeerStyle,
+                    beer.UpdatedAt,
+                    beer.BreweryId,
+                    beer.Id
+                },
+                _dbTransaction);
+            
+            // Finally, we'll return the newly inserted beer
+            return await GetBeerById(beer.Id);
         }
     }
 }

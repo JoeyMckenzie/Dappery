@@ -97,5 +97,33 @@ namespace Dappery.Data.Tests
             insertedBeer.Brewery.Beers.ShouldContain(b => b.Id == insertedBeer.Id);
             insertedBeer.Brewery.Beers.FirstOrDefault(b => b.Id == insertedBeer.Id)?.Name.ShouldBe(beerToInsert.Name);
         }
+        
+        [Fact]
+        public async Task UpdateBeer_WhenBeerIsValid_ReturnsUpdateBeer()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            var beerToUpdate = new Beer
+            {
+                Id = 1,
+                Name = "Colossus Imperial Stout",
+                UpdatedAt = DateTime.UtcNow,
+                BeerStyle = BeerStyle.Stout,
+                BreweryId = 1,
+            };
+            
+            // Act
+            var updatedBeer = await unitOfWork.BeerRepository.UpdateBeer(beerToUpdate);
+            
+            updatedBeer.ShouldNotBeNull();
+            updatedBeer.ShouldBeOfType<Beer>();
+            updatedBeer.Brewery.ShouldNotBeNull();
+            updatedBeer.Brewery.Address.ShouldNotBeNull();
+            updatedBeer.Brewery.Beers.ShouldNotBeEmpty();
+            updatedBeer.Brewery.Beers.Count.ShouldBe(3);
+            updatedBeer.Brewery.Beers.ShouldContain(b => b.Id == beerToUpdate.Id);
+            updatedBeer.Brewery.Beers.ShouldNotContain(b => b.Name == "Hexagenia");
+            updatedBeer.Brewery.Beers.FirstOrDefault(b => b.Id == beerToUpdate.Id)?.Name.ShouldBe(beerToUpdate.Name);
+        }
     }
 }
