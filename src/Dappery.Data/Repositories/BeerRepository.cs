@@ -132,13 +132,13 @@ namespace Dappery.Data.Repositories
             return await GetBeerById(beer.Id);
         }
 
-        public async Task<int> DeleteBeer(int id)
+        public async Task<int> DeleteBeer(int beerId)
         {
             // Our simplest command, just remove the beer directly from the database
             // Validation that the beer actually exists in the database will left to the application layer
             return await _dbConnection.ExecuteAsync(
                 @"DELETE FROM Beers WHERE Id = @Id",
-                new { Id = id },
+                new { Id = beerId },
                 _dbTransaction);
         }
     }

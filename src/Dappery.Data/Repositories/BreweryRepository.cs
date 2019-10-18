@@ -150,6 +150,8 @@ namespace Dappery.Data.Repositories
         {
             // Because we setup out database providers to cascade delete on parent entity removal, we won't have to
             // worry about individually removing all the associated beers and address
+            // NOTE: Because we don't directly expose CRUD operations on the address table, we'll validate the cascade
+            // remove directly in the database for now
             return await _dbConnection.ExecuteAsync(
                     @"DELETE FROM Breweries WHERE Id = @Id",
                 new {Id = breweryId},
