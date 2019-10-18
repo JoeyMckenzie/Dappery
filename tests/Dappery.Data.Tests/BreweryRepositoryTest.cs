@@ -174,5 +174,27 @@ namespace Dappery.Data.Tests
             updatedBrewery.Beers.ShouldNotBeNull();
             updatedBrewery.Beers.ShouldNotBeEmpty();
         }
+
+        [Fact]
+        public async Task DeleteBrewery_WhenBreweryExists_RemovesBreweryAndAllAssociatedBeersAndAddress()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            (await unitOfWork.BreweryRepository.GetAllBreweries())?.Count().ShouldBe(2);
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(5);
+            
+            
+            // Act
+            var removedBrewery = await unitOfWork.BreweryRepository.DeleteBrewery(1);
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            
+            // Assert
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(2);
+            removedBrewery.ShouldNotBeNull();
+            removedBrewery.ShouldBe(1);
+            breweries.ShouldNotBeNull();
+            breweries.Count.ShouldBe(1);
+            breweries.ShouldNotContain(br => br.Name == "Fall River Brewery");
+        }
     }
 }

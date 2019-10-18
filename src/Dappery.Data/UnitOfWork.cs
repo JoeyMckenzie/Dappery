@@ -108,7 +108,7 @@ namespace Dappery.Data
                     UpdatedAt DATE,
                     BreweryId INT NOT NULL,
                     CONSTRAINT FK_Beers_Breweries_Id FOREIGN KEY (BreweryId)
-                        REFERENCES Breweries (Id) ON DELETE NO ACTION
+                        REFERENCES Breweries (Id) ON DELETE CASCADE
                 );
             ";
             
@@ -123,7 +123,7 @@ namespace Dappery.Data
                     UpdatedAt DATE,
                     BreweryId INTEGER NOT NULL,
                     CONSTRAINT FK_Address_Breweries_Id FOREIGN KEY (BreweryId)
-                        REFERENCES Breweries (Id) ON DELETE NO ACTION
+                        REFERENCES Breweries (Id) ON DELETE CASCADE
                 );
             ";
             

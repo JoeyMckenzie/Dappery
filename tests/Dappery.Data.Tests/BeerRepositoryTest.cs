@@ -125,5 +125,26 @@ namespace Dappery.Data.Tests
             updatedBeer.Brewery.Beers.ShouldNotContain(b => b.Name == "Hexagenia");
             updatedBeer.Brewery.Beers.FirstOrDefault(b => b.Id == beerToUpdate.Id)?.Name.ShouldBe(beerToUpdate.Name);
         }
+
+        [Fact]
+        public async Task DeleteBeer_WhenBeerExists_RemovesBeerFromDatabase()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(5);
+            
+            // Act
+            var removeBeerCommand = await unitOfWork.BeerRepository.DeleteBeer(1);
+            var breweryOfRemovedBeer = await unitOfWork.BreweryRepository.GetBreweryById(1);
+            
+            // Assert
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(4);
+            removeBeerCommand.ShouldNotBeNull();
+            removeBeerCommand.ShouldBe(1);
+            breweryOfRemovedBeer.ShouldNotBeNull();
+            breweryOfRemovedBeer.Beers.ShouldNotBeNull();
+            breweryOfRemovedBeer.Beers.ShouldNotBeEmpty();
+            breweryOfRemovedBeer.Beers.ShouldNotContain(b => b.Name == "Hexagenia");
+        }
     }
 }

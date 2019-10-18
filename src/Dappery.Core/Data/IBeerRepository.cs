@@ -13,5 +13,7 @@ namespace Dappery.Core.Data
         Task<Beer> CreateBeer(Beer beer);
 
         Task<Beer> UpdateBeer(Beer beer);
+
+        Task<int> DeleteBeer(int beer);
     }
 }
