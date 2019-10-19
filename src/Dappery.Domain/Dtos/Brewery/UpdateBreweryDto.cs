@@ -1,7 +1,5 @@
 namespace Dappery.Domain.Dtos.Brewery
 {
-    using Entities;
-
     public class UpdateBreweryDto
     {
         public int Id { get; set; }
