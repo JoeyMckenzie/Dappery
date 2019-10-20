@@ -7,7 +7,7 @@ namespace Dappery.Data.Tests
     {
         public TestFixture()
         {
-            UnitOfWork = new UnitOfWork(true, null);
+            UnitOfWork = new UnitOfWork(null);
         }
         
         protected IUnitOfWork UnitOfWork { get; }

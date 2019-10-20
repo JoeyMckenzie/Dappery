@@ -13,24 +13,21 @@ namespace Dappery.Data
         private readonly IDbConnection _dbConnection;
         private readonly IDbTransaction _dbTransaction;
 
-        public UnitOfWork(bool useSqlite, string? connectionString)
+        public UnitOfWork(string? connectionString)
         {
             // Based on our database implementation, we'll need a reference to the last row inserted
-            string rowInsertRetrievalQuery = "SELECT CAST(SCOPE_IDENTITY() as int);"; 
+            string rowInsertRetrievalQuery; 
             
-            if (useSqlite)
+            // If no connection string is passed, we'll assume we're running with our SQLite database provider
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
                 _dbConnection = new SqliteConnection("Data Source=:memory:");
                 rowInsertRetrievalQuery = "SELECT last_insert_rowid();";
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    throw new ArgumentNullException(connectionString, "Connection string cannot be null");
-                }
-                
                 _dbConnection = new SqlConnection(connectionString);
+                rowInsertRetrievalQuery = "SELECT CAST(SCOPE_IDENTITY() as int);";
             }
             
             // Open our connection, begin our transaction, and instantiate our repositories
@@ -39,11 +36,12 @@ namespace Dappery.Data
             BreweryRepository = new BreweryRepository(_dbTransaction, rowInsertRetrievalQuery);
             BeerRepository = new BeerRepository(_dbTransaction, rowInsertRetrievalQuery);
 
-            if (useSqlite)
+            // Once our connection is open, if we're running SQLite for unit tests (or that actual application), let's seed some data
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
-                                
                 try
                 {
+                    // We'll seed a couple breweries each with an address and several beers
                     SeedDatabase(_dbConnection);
                 }
                 catch (Exception e)
@@ -65,6 +63,7 @@ namespace Dappery.Data
             }
             catch (Exception e)
             {
+                Console.WriteLine($"Could not commit the transaction, reason: {e.Message}");
                 _dbTransaction.Rollback();
             }
             finally
