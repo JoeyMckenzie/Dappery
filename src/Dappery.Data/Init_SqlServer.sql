@@ -25,7 +25,7 @@ CREATE TABLE [Beers] (
     CONSTRAINT [PK_Beers] PRIMARY KEY ([Id]),
     -- A beer has a one-to-one relation, i.e. one beer belongs to one brewery
     CONSTRAINT [FK_Beers_Breweries_Id] FOREIGN KEY ([BreweryId])
-        REFERENCES [Breweries] ([Id]) ON DELETE NO ACTION
+        REFERENCES [Breweries] ([Id]) ON DELETE CASCADE
 );
 CREATE INDEX [IX_Beers_BreweryId] ON [Beers] ([BreweryId]);
 
@@ -42,7 +42,7 @@ CREATE TABLE [Addresses] (
     CONSTRAINT [PK_Address] PRIMARY KEY ([Id]),
     -- An address has a one-sided 1-to-1 relation, i.e. a brewery has one address
     CONSTRAINT [FK_Address_Breweries_Id] FOREIGN KEY ([BreweryId])
-        REFERENCES [Breweries] ([Id]) ON DELETE NO ACTION
+        REFERENCES [Breweries] ([Id]) ON DELETE CASCADE
 );
 CREATE INDEX [IX_Address_BreweryId] ON [Addresses] ([BreweryId]);
 
