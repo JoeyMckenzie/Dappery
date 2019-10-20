@@ -69,17 +69,19 @@ namespace Dappery.Data.Repositories
                 new { BreweryId = beerFromId.Brewery?.Id },
                 _dbTransaction);
 
-            if (address != null && beerFromId.Brewery != null)
+            // Set the address found in the previous query to the beer's brewery address, if we have a brewery
+            if (beerFromId.Brewery != null)
             {
                 beerFromId.Brewery.Address = address;
             }
             
-            // Finally, let's add all the beers to our brewery attached to this beer
+            // Let's add all the beers to our brewery attached to this beer
             var beersFromBrewery = await _dbConnection.QueryAsync<Beer>(
                 @"SELECT * FROM Beers WHERE BreweryId = @BreweryId",
                 new { beerFromId.BreweryId },
                 _dbTransaction);
 
+            // Lastly, let's add all the beers to the entity model
             foreach (var beer in beersFromBrewery)
             {
                 beerFromId.Brewery?.Beers.Add(beer);
