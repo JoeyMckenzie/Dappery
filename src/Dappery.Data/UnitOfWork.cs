@@ -6,6 +6,7 @@ namespace Dappery.Data
     using Dapper;
     using Microsoft.Data.SqlClient;
     using Microsoft.Data.Sqlite;
+    using Npgsql;
     using Repositories;
 
     public class UnitOfWork : IUnitOfWork
@@ -13,7 +14,7 @@ namespace Dappery.Data
         private readonly IDbConnection _dbConnection;
         private readonly IDbTransaction _dbTransaction;
 
-        public UnitOfWork(string? connectionString)
+        public UnitOfWork(string? connectionString, bool isPostgres = false)
         {
             // Based on our database implementation, we'll need a reference to the last row inserted
             string rowInsertRetrievalQuery; 
@@ -22,12 +23,12 @@ namespace Dappery.Data
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 _dbConnection = new SqliteConnection("Data Source=:memory:");
-                rowInsertRetrievalQuery = "SELECT last_insert_rowid();";
+                rowInsertRetrievalQuery = "; SELECT last_insert_rowid();";
             }
             else
             {
-                _dbConnection = new SqlConnection(connectionString);
-                rowInsertRetrievalQuery = "SELECT CAST(SCOPE_IDENTITY() as int);";
+                _dbConnection = isPostgres ? (IDbConnection) new NpgsqlConnection(connectionString) : new SqlConnection(connectionString);
+                rowInsertRetrievalQuery = isPostgres ? "returning Id;" : "; SELECT CAST(SCOPE_IDENTITY() as int);" ;
             }
             
             // Open our connection, begin our transaction, and instantiate our repositories

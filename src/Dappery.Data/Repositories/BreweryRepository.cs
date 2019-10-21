@@ -80,12 +80,12 @@ namespace Dappery.Data.Repositories
                 transaction: _dbTransaction);
         }
         
-        public async Task<Brewery> CreateBrewery(Brewery brewery)
+        public async Task<int> CreateBrewery(Brewery brewery)
         {
             // Grab a reference to the address
             var address = brewery.Address;
             var breweryInsertSql =
-                new StringBuilder(@"INSERT INTO Breweries (Name, CreatedAt, UpdatedAt) VALUES (@Name, @CreatedAt, @UpdatedAt);");
+                new StringBuilder(@"INSERT INTO Breweries (Name, CreatedAt, UpdatedAt) VALUES (@Name, @CreatedAt, @UpdatedAt)");
             
             // Let's add the brewery
             var breweryId = await _dbConnection.ExecuteScalarAsync<int>(
@@ -109,10 +109,10 @@ namespace Dappery.Data.Repositories
                 }, 
                 _dbTransaction);
             
-            return await GetBreweryById(breweryId);
+            return breweryId;
         }
 
-        public async Task<Brewery> UpdateBrewery(Brewery brewery, bool updateAddress)
+        public async Task UpdateBrewery(Brewery brewery, bool updateAddress)
         {
             // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
             await _dbConnection.ExecuteAsync(
@@ -142,8 +142,6 @@ namespace Dappery.Data.Repositories
                     },
                     _dbTransaction);
             }
-            
-            return await GetBreweryById(brewery.Id);
         }
 
         public async Task<int> DeleteBrewery(int breweryId)

@@ -86,7 +86,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var insertedBeer = await unitOfWork.BeerRepository.CreateBeer(beerToInsert);
+            var beerId = await unitOfWork.BeerRepository.CreateBeer(beerToInsert);
+            var insertedBeer = await unitOfWork.BeerRepository.GetBeerById(beerId);
             
             insertedBeer.ShouldNotBeNull();
             insertedBeer.ShouldBeOfType<Beer>();
@@ -113,7 +114,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var updatedBeer = await unitOfWork.BeerRepository.UpdateBeer(beerToUpdate);
+            await unitOfWork.BeerRepository.UpdateBeer(beerToUpdate);
+            var updatedBeer = await unitOfWork.BeerRepository.GetBeerById(beerToUpdate.Id);
             
             updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldBeOfType<Beer>();

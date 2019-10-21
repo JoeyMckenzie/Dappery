@@ -93,7 +93,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var insertedBrewery = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
+            var breweryId = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
+            var insertedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryId);
             
             // Assert
             insertedBrewery.ShouldNotBeNull();
@@ -126,7 +127,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var updatedBrewery = await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate);
+            await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate);
+            var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
             
             // Assert
             updatedBrewery.ShouldNotBeNull();
@@ -161,7 +163,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var updatedBrewery = await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, true);
+            await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, true);
+            var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
             
             // Assert
             updatedBrewery.ShouldNotBeNull();

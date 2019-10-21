@@ -5,7 +5,7 @@ namespace Dappery.Data.Tests
 
     public class TestFixture : IDisposable
     {
-        public TestFixture()
+        protected TestFixture()
         {
             UnitOfWork = new UnitOfWork(null);
         }

@@ -90,11 +90,11 @@ namespace Dappery.Data.Repositories
             return beerFromId;
         }
 
-        public async Task<Beer> CreateBeer(Beer beer)
+        public async Task<int> CreateBeer(Beer beer)
         {
             // From our business we defined, we'll assume the brewery ID is always attached to the beer
             var beerToInsertSql = new StringBuilder(@"INSERT INTO Beers (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
-                                        VALUES (@Name, @BeerStyle, @CreatedAt, @UpdatedAt, @BreweryId);");
+                                        VALUES (@Name, @BeerStyle, @CreatedAt, @UpdatedAt, @BreweryId)");
             
             // Let's insert the beer and grab its ID
             var beerId = await _dbConnection.ExecuteScalarAsync<int>(
@@ -109,11 +109,11 @@ namespace Dappery.Data.Repositories
                 },
                 _dbTransaction);
             
-            // Finally, we'll return the newly inserted beer
-            return await GetBeerById(beerId);
+            // Finally, we'll return the newly inserted beer Id
+            return beerId;
         }
 
-        public async Task<Beer> UpdateBeer(Beer beer)
+        public async Task UpdateBeer(Beer beer)
         {
             // Our application layer will be in charge of mapping the new properties to the entity layer,
             // as well as validating that the beer exists, so the data layer will only be responsible for
@@ -129,9 +129,6 @@ namespace Dappery.Data.Repositories
                     beer.Id
                 },
                 _dbTransaction);
-            
-            // Finally, we'll return the newly inserted beer
-            return await GetBeerById(beer.Id);
         }
 
         public async Task<int> DeleteBeer(int beerId)
