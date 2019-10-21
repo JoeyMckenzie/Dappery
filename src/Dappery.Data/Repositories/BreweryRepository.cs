@@ -152,7 +152,7 @@ namespace Dappery.Data.Repositories
             // remove directly in the database for now
             return await _dbConnection.ExecuteAsync(
                     @"DELETE FROM Breweries WHERE Id = @Id",
-                new {Id = breweryId},
+                new { Id = breweryId },
                 _dbTransaction);
         }
     }
