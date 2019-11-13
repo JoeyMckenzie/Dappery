@@ -17,6 +17,7 @@ namespace Dappery.Data.Tests
 
             // Act
             var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            unitOfWork.Commit();
 
             // Assert
             breweries.ShouldNotBeNull();
@@ -45,6 +46,7 @@ namespace Dappery.Data.Tests
 
             // Act
             var brewery = await unitOfWork.BreweryRepository.GetBreweryById(1);
+            unitOfWork.Commit();
 
             // Assert
             brewery.ShouldNotBeNull();
@@ -66,6 +68,7 @@ namespace Dappery.Data.Tests
 
             // Act
             var brewery = await unitOfWork.BreweryRepository.GetBreweryById(11);
+            unitOfWork.Commit();
 
             // Assert
             brewery.ShouldBeNull();
@@ -95,6 +98,7 @@ namespace Dappery.Data.Tests
             // Act
             var breweryId = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
             var insertedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryId);
+            unitOfWork.Commit();
             
             // Assert
             insertedBrewery.ShouldNotBeNull();
@@ -129,6 +133,7 @@ namespace Dappery.Data.Tests
             // Act
             await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate);
             var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
+            unitOfWork.Commit();
             
             // Assert
             updatedBrewery.ShouldNotBeNull();
@@ -165,6 +170,7 @@ namespace Dappery.Data.Tests
             // Act
             await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, true);
             var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
+            unitOfWork.Commit();
             
             // Assert
             updatedBrewery.ShouldNotBeNull();
@@ -190,9 +196,10 @@ namespace Dappery.Data.Tests
             // Act
             var removedBrewery = await unitOfWork.BreweryRepository.DeleteBrewery(1);
             var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(2);
+            unitOfWork.Commit();
             
             // Assert
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(2);
             removedBrewery.ShouldNotBeNull();
             removedBrewery.ShouldBe(1);
             breweries.ShouldNotBeNull();

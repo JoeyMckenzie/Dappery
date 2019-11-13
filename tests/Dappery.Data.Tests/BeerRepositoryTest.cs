@@ -18,6 +18,7 @@ namespace Dappery.Data.Tests
             
             // Act
             var beers = (await unitOfWork.BeerRepository.GetAllBeers()).ToList();
+            unitOfWork.Commit();
                 
             // Assert
             beers.ShouldNotBeNull();
@@ -46,6 +47,7 @@ namespace Dappery.Data.Tests
             
             // Act
             var beer = await unitOfWork.BeerRepository.GetBeerById(1);
+            unitOfWork.Commit();
                 
             // Assert, validate a few properties
             beer.ShouldNotBeNull();
@@ -66,6 +68,7 @@ namespace Dappery.Data.Tests
             
             // Act
             var beer = await unitOfWork.BeerRepository.GetBeerById(10);
+            unitOfWork.Commit();
                 
             // Assert, validate a few properties
             beer.ShouldBeNull();
@@ -88,6 +91,7 @@ namespace Dappery.Data.Tests
             // Act
             var beerId = await unitOfWork.BeerRepository.CreateBeer(beerToInsert);
             var insertedBeer = await unitOfWork.BeerRepository.GetBeerById(beerId);
+            unitOfWork.Commit();
             
             insertedBeer.ShouldNotBeNull();
             insertedBeer.ShouldBeOfType<Beer>();
@@ -116,6 +120,7 @@ namespace Dappery.Data.Tests
             // Act
             await unitOfWork.BeerRepository.UpdateBeer(beerToUpdate);
             var updatedBeer = await unitOfWork.BeerRepository.GetBeerById(beerToUpdate.Id);
+            unitOfWork.Commit();
             
             updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldBeOfType<Beer>();
@@ -138,9 +143,10 @@ namespace Dappery.Data.Tests
             // Act
             var removeBeerCommand = await unitOfWork.BeerRepository.DeleteBeer(1);
             var breweryOfRemovedBeer = await unitOfWork.BreweryRepository.GetBreweryById(1);
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(4);
+            unitOfWork.Commit();
             
             // Assert
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(4);
             removeBeerCommand.ShouldNotBeNull();
             removeBeerCommand.ShouldBe(1);
             breweryOfRemovedBeer.ShouldNotBeNull();
