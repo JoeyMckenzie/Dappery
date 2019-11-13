@@ -4,7 +4,7 @@ namespace Dappery.Domain.Dtos.Beer
 
     public class CreateBeerDto
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public BeerStyle Style { get; set; }
     }

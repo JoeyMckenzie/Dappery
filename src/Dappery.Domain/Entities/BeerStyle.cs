@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace Dappery.Domain.Entities
 {
     public enum BeerStyle
@@ -8,6 +10,7 @@ namespace Dappery.Domain.Entities
         PaleAle,
         Ipa,
         DoubleIpa,
+        WheatAle,
         TripleIpa,
         NewEnglandIpa,
         Stout

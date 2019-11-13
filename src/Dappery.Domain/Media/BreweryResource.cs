@@ -4,6 +4,8 @@ namespace Dappery.Domain.Media
 
     public class BreweryResource
     {
-        public BreweryDto Brewery { get; set; }
+        public BreweryResource(BreweryDto brewery) => Brewery = brewery;
+        
+        public BreweryDto Brewery { get; }
     }
 }

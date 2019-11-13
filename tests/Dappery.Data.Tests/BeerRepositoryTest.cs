@@ -18,6 +18,7 @@ namespace Dappery.Data.Tests
             
             // Act
             var beers = (await unitOfWork.BeerRepository.GetAllBeers()).ToList();
+            unitOfWork.Commit();
                 
             // Assert
             beers.ShouldNotBeNull();
@@ -46,6 +47,7 @@ namespace Dappery.Data.Tests
             
             // Act
             var beer = await unitOfWork.BeerRepository.GetBeerById(1);
+            unitOfWork.Commit();
                 
             // Assert, validate a few properties
             beer.ShouldNotBeNull();

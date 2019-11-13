@@ -1,18 +1,18 @@
 namespace Dappery.Domain.Dtos.Brewery
 {
     using System.Collections.Generic;
-    using Entities;
+    using Beer;
 
     public class BreweryDto
     {
         public int Id { get; set; }
-        
-        public string Name { get; set; }
 
-        public AddressDto Address { get; set; }
+        public string? Name { get; set; }
 
-        public IEnumerable<Beer> Beers { get; set; }
+        public AddressDto? Address { get; set; }
 
-        public int BeerCount { get; set; }
+        public IEnumerable<BeerDto>? Beers { get; set; }
+
+        public int? BeerCount { get; set; }
     }
 }

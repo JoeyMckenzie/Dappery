@@ -4,8 +4,8 @@ namespace Dappery.Domain.Dtos.Beer
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public AddressDto Address { get; set; }
+        public AddressDto? Address { get; set; }
     }
 }

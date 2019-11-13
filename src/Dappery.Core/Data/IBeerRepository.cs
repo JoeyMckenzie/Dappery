@@ -6,7 +6,7 @@ namespace Dappery.Core.Data
 
     public interface IBeerRepository
     {
-        Task<IEnumerable<Beer>> GetAllBeers();
+        Task<IEnumerable<Beer>?> GetAllBeers();
         
         Task<Beer> GetBeerById(int id);
 

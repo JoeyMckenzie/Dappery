@@ -8,10 +8,10 @@ namespace Dappery.Domain.Entities
         {
             Beers = new List<Beer>();
         }
-        
-        public string Name { get; set; }
 
-        public Address Address { get; set; }
+        public string? Name { get; set; }
+
+        public Address? Address { get; set; }
 
         public ICollection<Beer> Beers { get; }
 

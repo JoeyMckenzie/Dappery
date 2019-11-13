@@ -99,12 +99,12 @@ namespace Dappery.Data.Repositories
                         VALUES (@StreetAddress, @City, @State, @ZipCode, @CreatedAt, @UpdatedAt, @BreweryId)",
                 new
                 {
-                    address.StreetAddress, 
-                    address.City,
-                    address.State,
-                    address.ZipCode,
-                    address.CreatedAt,
-                    address.UpdatedAt,
+                    address?.StreetAddress, 
+                    address?.City,
+                    address?.State,
+                    address?.ZipCode,
+                    address?.CreatedAt,
+                    address?.UpdatedAt,
                     BreweryId = breweryId
                 }, 
                 _dbTransaction);
