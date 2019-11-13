@@ -40,7 +40,7 @@ namespace Dappery.Data.Tests
         }
         
         [Fact]
-        public async Task GetBeerById_WhenInvokedAndBeerExists_ReturnsValidMappedBeer()
+        public async Task GetBeerById_WhenInvokedAndBeerExists_ReturnsValidBeer()
         {
             // Arrange
             using var unitOfWork = UnitOfWork;
