@@ -7,7 +7,7 @@ namespace Dappery.Domain.Media
     {
         public ResourceList(IEnumerable<T>? items) => Items = items;
         
-        public IEnumerable<T> Items { get; }
+        public IEnumerable<T>? Items { get; }
 
         public int Count => Items?.Count() ?? 0;
     }
