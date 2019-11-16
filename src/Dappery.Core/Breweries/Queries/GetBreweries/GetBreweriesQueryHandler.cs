@@ -3,24 +3,19 @@ using Dappery.Core.Extensions;
 
 namespace Dappery.Core.Breweries.Queries.GetBreweries
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
     using Data;
-    using Domain.Dtos.Brewery;
     using Domain.Media;
     using MediatR;
 
     public class GetBreweriesQueryHandler : IRequestHandler<GetBreweriesQuery, BreweryResourceList>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public GetBreweriesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetBreweriesQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<BreweryResourceList> Handle(GetBreweriesQuery request, CancellationToken cancellationToken)

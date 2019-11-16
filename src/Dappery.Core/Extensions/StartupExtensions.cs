@@ -1,7 +1,6 @@
 namespace Dappery.Core.Extensions
 {
     using System.Reflection;
-    using AutoMapper;
     using Infrastructure;
     using MediatR;
     using Microsoft.Extensions.DependencyInjection;
@@ -10,8 +9,7 @@ namespace Dappery.Core.Extensions
     {
         public static void AddDapperyCore(this IServiceCollection services)
         {
-            // Add our AutoMapper, MediatR, and FluentValidation dependencies
-            services.AddAutoMapper(typeof(MappingProfile).Assembly);
+            // Add our MediatR and FluentValidation dependencies
             services.AddMediatR(Assembly.GetExecutingAssembly());
             
             // Add our MediatR validation pipeline

@@ -3,7 +3,7 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
+    using Dappery.Core.Extensions;
     using Data;
     using Domain.Dtos.Brewery;
     using Domain.Media;
@@ -13,12 +13,10 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
     public class UpdateBreweryCommandHandler : IRequestHandler<UpdateBreweryCommand, BreweryResource>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public UpdateBreweryCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateBreweryCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<BreweryResource> Handle(UpdateBreweryCommand request, CancellationToken cancellationToken)
@@ -55,7 +53,7 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
             _unitOfWork.Commit();
             
             // Map and return the brewery
-            return new BreweryResource(_mapper.Map<BreweryDto>(updatedBrewery));
+            return new BreweryResource(updatedBrewery.ToBreweryDto());
         }
     }
 }

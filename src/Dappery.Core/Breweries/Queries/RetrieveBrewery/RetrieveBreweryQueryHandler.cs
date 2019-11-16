@@ -5,9 +5,7 @@ namespace Dappery.Core.Breweries.Queries.RetrieveBrewery
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
     using Data;
-    using Domain.Dtos.Brewery;
     using Domain.Media;
     using Exceptions;
     using MediatR;
@@ -15,12 +13,10 @@ namespace Dappery.Core.Breweries.Queries.RetrieveBrewery
     public class RetrieveBreweryQueryHandler : IRequestHandler<RetrieveBreweryQuery, BreweryResource>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public RetrieveBreweryQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public RetrieveBreweryQueryHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<BreweryResource> Handle(RetrieveBreweryQuery request, CancellationToken cancellationToken)

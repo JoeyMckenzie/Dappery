@@ -3,7 +3,6 @@ namespace Dappery.Core.Breweries.Commands.DeleteBrewery
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
     using Data;
     using Exceptions;
     using MediatR;
