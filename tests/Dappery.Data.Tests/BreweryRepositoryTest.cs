@@ -1,6 +1,7 @@
 namespace Dappery.Data.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Domain.Entities;
@@ -17,6 +18,7 @@ namespace Dappery.Data.Tests
 
             // Act
             var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            unitOfWork.Commit();
 
             // Assert
             breweries.ShouldNotBeNull();
@@ -36,6 +38,24 @@ namespace Dappery.Data.Tests
             breweries.FirstOrDefault(br => br.Name == "Sierra Nevada Brewing Company")?.Beers
                 .ShouldContain(b => b.Name == "Hazy Little Thing");
         }
+
+        [Fact]
+        public async Task GetAllBreweries_WhenInvokedAndNoBreweriesExist_ReturnsEmptyList()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            await unitOfWork.BreweryRepository.DeleteBrewery(1);
+            await unitOfWork.BreweryRepository.DeleteBrewery(2);
+
+            // Act
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            unitOfWork.Commit();
+
+            // Assert
+            breweries.ShouldNotBeNull();
+            breweries.ShouldBeOfType<List<Brewery>>();
+            breweries.ShouldBeEmpty();
+        }
         
         [Fact]
         public async Task GetBreweryById_WhenInvokedAndBreweryExist_ReturnsValidBreweryWithBeersAndAddress()
@@ -45,6 +65,7 @@ namespace Dappery.Data.Tests
 
             // Act
             var brewery = await unitOfWork.BreweryRepository.GetBreweryById(1);
+            unitOfWork.Commit();
 
             // Assert
             brewery.ShouldNotBeNull();
@@ -66,6 +87,7 @@ namespace Dappery.Data.Tests
 
             // Act
             var brewery = await unitOfWork.BreweryRepository.GetBreweryById(11);
+            unitOfWork.Commit();
 
             // Assert
             brewery.ShouldBeNull();
@@ -95,6 +117,7 @@ namespace Dappery.Data.Tests
             // Act
             var breweryId = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
             var insertedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryId);
+            unitOfWork.Commit();
             
             // Assert
             insertedBrewery.ShouldNotBeNull();
@@ -129,6 +152,7 @@ namespace Dappery.Data.Tests
             // Act
             await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate);
             var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
+            unitOfWork.Commit();
             
             // Assert
             updatedBrewery.ShouldNotBeNull();
@@ -165,6 +189,7 @@ namespace Dappery.Data.Tests
             // Act
             await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, true);
             var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
+            unitOfWork.Commit();
             
             // Assert
             updatedBrewery.ShouldNotBeNull();
@@ -190,9 +215,10 @@ namespace Dappery.Data.Tests
             // Act
             var removedBrewery = await unitOfWork.BreweryRepository.DeleteBrewery(1);
             var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(2);
+            unitOfWork.Commit();
             
             // Assert
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(2);
             removedBrewery.ShouldNotBeNull();
             removedBrewery.ShouldBe(1);
             breweries.ShouldNotBeNull();

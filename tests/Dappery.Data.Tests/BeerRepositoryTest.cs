@@ -38,9 +38,30 @@ namespace Dappery.Data.Tests
             beers.ShouldContain(b => b.Name == "Hazy Little Thing");
             beers.FirstOrDefault(b => b.Name == "Hazy Little Thing")?.BeerStyle.ShouldBe(BeerStyle.NewEnglandIpa);
         }
+
+        [Fact]
+        public async Task GetAllBeers_WhenNoBeersExist_ReturnsEmptyListOfBeers()
+        {
+            // Arrange, remove all the beers from our database
+            using var unitOfWork = UnitOfWork;
+            await unitOfWork.BeerRepository.DeleteBeer(1);
+            await unitOfWork.BeerRepository.DeleteBeer(2);
+            await unitOfWork.BeerRepository.DeleteBeer(3);
+            await unitOfWork.BeerRepository.DeleteBeer(4);
+            await unitOfWork.BeerRepository.DeleteBeer(5);
+            
+            // Act
+            var beers = (await unitOfWork.BeerRepository.GetAllBeers()).ToList();
+            unitOfWork.Commit();
+                
+            // Assert
+            beers.ShouldNotBeNull();
+            beers.ShouldBeOfType<List<Beer>>();
+            beers.ShouldBeEmpty();
+        }
         
         [Fact]
-        public async Task GetBeerById_WhenInvokedAndBeerExists_ReturnsValidMappedBeer()
+        public async Task GetBeerById_WhenInvokedAndBeerExists_ReturnsValidBeer()
         {
             // Arrange
             using var unitOfWork = UnitOfWork;
@@ -68,6 +89,7 @@ namespace Dappery.Data.Tests
             
             // Act
             var beer = await unitOfWork.BeerRepository.GetBeerById(10);
+            unitOfWork.Commit();
                 
             // Assert, validate a few properties
             beer.ShouldBeNull();
@@ -90,6 +112,7 @@ namespace Dappery.Data.Tests
             // Act
             var beerId = await unitOfWork.BeerRepository.CreateBeer(beerToInsert);
             var insertedBeer = await unitOfWork.BeerRepository.GetBeerById(beerId);
+            unitOfWork.Commit();
             
             insertedBeer.ShouldNotBeNull();
             insertedBeer.ShouldBeOfType<Beer>();
@@ -118,6 +141,7 @@ namespace Dappery.Data.Tests
             // Act
             await unitOfWork.BeerRepository.UpdateBeer(beerToUpdate);
             var updatedBeer = await unitOfWork.BeerRepository.GetBeerById(beerToUpdate.Id);
+            unitOfWork.Commit();
             
             updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldBeOfType<Beer>();
@@ -140,9 +164,10 @@ namespace Dappery.Data.Tests
             // Act
             var removeBeerCommand = await unitOfWork.BeerRepository.DeleteBeer(1);
             var breweryOfRemovedBeer = await unitOfWork.BreweryRepository.GetBreweryById(1);
+            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(4);
+            unitOfWork.Commit();
             
             // Assert
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(4);
             removeBeerCommand.ShouldNotBeNull();
             removeBeerCommand.ShouldBe(1);
             breweryOfRemovedBeer.ShouldNotBeNull();
