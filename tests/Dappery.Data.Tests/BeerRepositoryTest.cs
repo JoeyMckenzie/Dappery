@@ -38,6 +38,27 @@ namespace Dappery.Data.Tests
             beers.ShouldContain(b => b.Name == "Hazy Little Thing");
             beers.FirstOrDefault(b => b.Name == "Hazy Little Thing")?.BeerStyle.ShouldBe(BeerStyle.NewEnglandIpa);
         }
+
+        [Fact]
+        public async Task GetAllBeers_WhenNoBeersExist_ReturnsEmptyListOfBeers()
+        {
+            // Arrange, remove all the beers from our database
+            using var unitOfWork = UnitOfWork;
+            await unitOfWork.BeerRepository.DeleteBeer(1);
+            await unitOfWork.BeerRepository.DeleteBeer(2);
+            await unitOfWork.BeerRepository.DeleteBeer(3);
+            await unitOfWork.BeerRepository.DeleteBeer(4);
+            await unitOfWork.BeerRepository.DeleteBeer(5);
+            
+            // Act
+            var beers = (await unitOfWork.BeerRepository.GetAllBeers()).ToList();
+            unitOfWork.Commit();
+                
+            // Assert
+            beers.ShouldNotBeNull();
+            beers.ShouldBeOfType<List<Beer>>();
+            beers.ShouldBeEmpty();
+        }
         
         [Fact]
         public async Task GetBeerById_WhenInvokedAndBeerExists_ReturnsValidBeer()

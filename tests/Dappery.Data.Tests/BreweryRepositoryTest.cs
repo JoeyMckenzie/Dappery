@@ -1,6 +1,7 @@
 namespace Dappery.Data.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Domain.Entities;
@@ -36,6 +37,24 @@ namespace Dappery.Data.Tests
                 .ShouldContain(b => b.Name == "Pale Ale");
             breweries.FirstOrDefault(br => br.Name == "Sierra Nevada Brewing Company")?.Beers
                 .ShouldContain(b => b.Name == "Hazy Little Thing");
+        }
+
+        [Fact]
+        public async Task GetAllBreweries_WhenInvokedAndNoBreweriesExist_ReturnsEmptyList()
+        {
+            // Arrange
+            using var unitOfWork = UnitOfWork;
+            await unitOfWork.BreweryRepository.DeleteBrewery(1);
+            await unitOfWork.BreweryRepository.DeleteBrewery(2);
+
+            // Act
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            unitOfWork.Commit();
+
+            // Assert
+            breweries.ShouldNotBeNull();
+            breweries.ShouldBeOfType<List<Brewery>>();
+            breweries.ShouldBeEmpty();
         }
         
         [Fact]
