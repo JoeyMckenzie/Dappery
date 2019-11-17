@@ -1,12 +1,13 @@
-using System.Threading.Tasks;
-using Dappery.Core.Beers.Queries.GetBeers;
-using Dappery.Domain.Media;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
 namespace Dappery.Api.Controllers
 {
+    using System.Threading.Tasks;
     using Core.Beers.Queries.RetrieveBeer;
+    using Dappery.Core.Beers.Commands.CreateBeer;
+    using Dappery.Core.Beers.Queries.GetBeers;
+    using Dappery.Domain.Dtos.Beer;
+    using Dappery.Domain.Media;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
 
     public class BeersController : DapperyControllerBase
     {
@@ -29,6 +30,13 @@ namespace Dappery.Api.Controllers
         {
             _logger.LogInformation($"Retrieving beer from ID {id}");
             return await Mediator.Send(new RetrieveBeerQuery(id));
+        }
+
+        [HttpPost]
+        public async Task<BeerResource> CreateBeer(CreateBeerDto beerDto)
+        {
+            _logger.LogInformation($"Creating beer for brewery ID {beerDto}");
+            return await Mediator.Send(new CreateBeerCommand(beerDto));
         }
     }
 }

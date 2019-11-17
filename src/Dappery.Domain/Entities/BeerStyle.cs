@@ -13,6 +13,7 @@ namespace Dappery.Domain.Entities
         WheatAle,
         TripleIpa,
         NewEnglandIpa,
-        Stout
+        Stout,
+        Other
     }
 }
