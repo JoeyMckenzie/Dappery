@@ -1,6 +1,8 @@
 namespace Dappery.Domain.Media
-{
-    public class BeerResource
-    {
-    }
-}
+ {
+     using Dtos.Beer;
+ 
+     public class BeerResource : Resource<BeerDto>
+     {
+     }
+ }
