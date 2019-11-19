@@ -17,13 +17,9 @@ namespace Dappery.Core.Beers.Commands.CreateBeer
             RuleFor(b => b.Dto.Style)
                 .NotNullOrEmpty();
 
-//            RuleFor(b => b.Dto.B)
-//                .NotNull()
-//                .WithMessage("A beer cannot be created without a brewery");
-//
-//            RuleFor(b => b.Dto.Id)
-//                .NotNull()
-//                .WithMessage("Must supply the brewery ID");
+           RuleFor(b => b.Dto.BreweryId)
+               .NotNull()
+               .WithMessage("Must supply the brewery ID");
         }
     }
 }

@@ -1,11 +1,11 @@
 namespace Dappery.Api.Controllers
 {
     using System.Threading.Tasks;
+    using Core.Beers.Commands.CreateBeer;
+    using Core.Beers.Queries.GetBeers;
     using Core.Beers.Queries.RetrieveBeer;
-    using Dappery.Core.Beers.Commands.CreateBeer;
-    using Dappery.Core.Beers.Queries.GetBeers;
-    using Dappery.Domain.Dtos.Beer;
-    using Dappery.Domain.Media;
+    using Domain.Dtos.Beer;
+    using Domain.Media;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -37,6 +37,12 @@ namespace Dappery.Api.Controllers
         {
             _logger.LogInformation($"Creating beer for brewery ID {beerDto}");
             return await Mediator.Send(new CreateBeerCommand(beerDto));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<BeerResource> UpdateBeer(UpdateBeerDto beerDto)
+        {
+            
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Dappery.Core.Extensions
                 Id = beer.Id,
                 Name = beer.Name,
                 Style = beer.BeerStyle.ToString(),
-                Brewery = beer.Brewery.ToBreweryDto(false),
+                Brewery = beer.Brewery?.ToBreweryDto(false),
             };
         }
     }

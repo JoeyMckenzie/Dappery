@@ -2,10 +2,11 @@ namespace Dappery.Domain.Media
 {
     using Dtos.Beer;
 
-    public class BeerResource
+    public class BeerResource : Resource<BeerDto>
     {
-        public BeerResource(BeerDto beer) => Beer = beer;
-        
-        public BeerDto Beer { get; }
+        public BeerResource(BeerDto resource) 
+            : base(resource)
+        {
+        }
     }
 }

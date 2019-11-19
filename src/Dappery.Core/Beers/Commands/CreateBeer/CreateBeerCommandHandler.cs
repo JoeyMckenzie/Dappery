@@ -3,10 +3,13 @@ namespace Dappery.Core.Beers.Commands.CreateBeer
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Dappery.Domain.Entities;
-    using Dappery.Domain.Media;
+    using Extensions;
+    using Domain.Entities;
+    using Domain.Media;
     using Data;
     using MediatR;
+    using Exceptions;
+    using System.Net;
 
     public class CreateBeerCommandHandler : IRequestHandler<CreateBeerCommand, BeerResource>
     {
@@ -17,19 +20,38 @@ namespace Dappery.Core.Beers.Commands.CreateBeer
             _unitOfWork = unitOfWork;
         }
 
-        public Task<BeerResource> Handle(CreateBeerCommand request, CancellationToken cancellationToken)
+        public async Task<BeerResource> Handle(CreateBeerCommand request, CancellationToken cancellationToken)
         {
-            // // Attempt to parse the incoming BeerStyle enumeration value
-            // var parsedBeerStyle = Enum.TryParse<BeerStyle>(request.Dto.Style, true, out BeerStyle beerStyle);
+            // Check to make sure the brewery exists from the given brewery ID on the request
+            var existingBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Dto.BreweryId);
 
-            // // Let's instantiate a beer instance
-            // var beerToAdd = new Beer
-            // {
-            //     Name = request.Dto.Name,
-            //     BeerStyle = parsedBeerStyle ? beerStyle : BeerStyle.Other,
-            // };
+            // Invalidate the request if no corresponding brewery exists
+            // Since we're not overloading the '==' operator, let's use the 'is' comparison here
+            if (existingBrewery is null)
+            {
+                throw new DapperyApiException($"No brewery found with ID {request.Dto.BreweryId}", HttpStatusCode.NotFound);
+            }
 
-            throw new System.NotImplementedException();
+            // Attempt to parse the incoming BeerStyle enumeration value
+            var parsedBeerStyle = Enum.TryParse(request.Dto.Style, true, out BeerStyle beerStyle);
+
+            // Let's instantiate a beer instance
+            var beerToAdd = new Beer
+            {
+                Name = request.Dto.Name,
+                BeerStyle = parsedBeerStyle ? beerStyle : BeerStyle.Other,
+                BreweryId = request.Dto.BreweryId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            // Add the record to the database and retrieve the record after we create it
+            var createdBeerId = await _unitOfWork.BeerRepository.CreateBeer(beerToAdd);
+            var createdBeer = await _unitOfWork.BeerRepository.GetBeerById(createdBeerId);
+            _unitOfWork.Commit();
+
+            // Return the mapped beer
+            return new BeerResource(createdBeer.ToBeerDto());
         }
     }
 }
