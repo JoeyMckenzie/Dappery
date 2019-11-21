@@ -6,6 +6,8 @@ namespace Dappery.Domain.Dtos.Beer
 
         public string Name { get; set; }
 
-        public AddressDto Address { get; set; }
+        public string Style { get; set; }
+
+        public int BreweryId { get; set; }
     }
 }
