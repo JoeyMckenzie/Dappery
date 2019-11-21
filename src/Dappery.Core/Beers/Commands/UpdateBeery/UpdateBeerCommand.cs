@@ -6,8 +6,8 @@ namespace Dappery.Core.Beers.Commands.UpdateBeery
 
     public class UpdateBeerCommand : IRequest<BeerResource>
     {
-        public UpdateBeerCommand(CreateBeerDto beerDto) => Dto = beerDto;
+        public UpdateBeerCommand(UpdateBeerDto beerDto) => Dto = beerDto;
         
-        public CreateBeerDto Dto { get; }
+        public UpdateBeerDto Dto { get; }
     }
 }

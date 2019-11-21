@@ -2,6 +2,7 @@ namespace Dappery.Api.Controllers
 {
     using System.Threading.Tasks;
     using Core.Beers.Commands.CreateBeer;
+    using Core.Beers.Commands.UpdateBeery;
     using Core.Beers.Queries.GetBeers;
     using Core.Beers.Queries.RetrieveBeer;
     using Domain.Dtos.Beer;
@@ -42,7 +43,7 @@ namespace Dappery.Api.Controllers
         [HttpPut("{id}")]
         public async Task<BeerResource> UpdateBeer(UpdateBeerDto beerDto)
         {
-            
+            return await Mediator.Send(new UpdateBeerCommand(beerDto))
         }
     }
 }
