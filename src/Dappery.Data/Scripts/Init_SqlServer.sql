@@ -46,137 +46,98 @@ CREATE TABLE [Addresses] (
 );
 CREATE INDEX [IX_Address_BreweryId] ON [Addresses] ([BreweryId]);
 
+-- Seed our transactional data
+BEGIN TRANSACTION
+    
+    INSERT INTO [Breweries]  (Name, CreatedAt, UpdatedAt)
+    VALUES 
+        (
+            'Fall River Brewery', 
+            SYSDATETIME(), 
+            SYSDATETIME()
+        );
+    
+    INSERT INTO [Breweries]  (Name, CreatedAt, UpdatedAt)
+    VALUES 
+        (
+            'Sierra Nevada Brewing Company',
+            SYSDATETIME(),
+            SYSDATETIME()
+        );
+    
+    INSERT INTO [Addresses] (StreetAddress, City, State, ZipCode, CreatedAt, UpdatedAt, BreweryId)
+    VALUES 
+        (
+            '1030 E Cypress Ave Ste D',
+            'Redding',
+            'CA',
+            '96002',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            1
+        );
+    
+    INSERT INTO [Addresses] (StreetAddress, City, State, ZipCode, CreatedAt, UpdatedAt, BreweryId)
+    VALUES 
+        (
+            '1075 E 20th St',
+            'Chico',
+            'CA',
+            '95928',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            2
+        );
+    
+    INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
+    VALUES
+        (
+            'Hexagenia',
+            'Ipa',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            1
+        );
+    
+    INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
+    VALUES
+        (
+            'Widowmaker',
+            'DoubleIpa',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            1
+        );
+    
+    INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
+    VALUES
+        (
+            'Hooked',
+            'Lager',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            1
+        );
+    
+    
+    INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
+    VALUES
+        (
+            'Pale Ale',
+            'PaleAle',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            2
+        );
+    
+    INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
+    VALUES
+        (
+            'Old Chico',
+            'WheatAle',
+            SYSDATETIME(),
+            SYSDATETIME(),
+            2
+        );
 
--- Seed data
-INSERT INTO [Breweries]  (Name, CreatedAt, UpdatedAt)
-VALUES 
-    (
-        'Fall River Brewery', 
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0), 
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0)
-    );
-
-INSERT INTO [Breweries]  (Name, CreatedAt, UpdatedAt)
-VALUES 
-    (
-        'Sierra Nevada Brewing Company', 
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0), 
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0)
-    );
-
-INSERT INTO [Addresses] (StreetAddress, City, State, ZipCode, CreatedAt, UpdatedAt, BreweryId)
-VALUES 
-    (
-        '1030 E Cypress Ave Ste D',
-        'Redding',
-        'CA',
-        '96002',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        1
-    );
-
-INSERT INTO [Addresses] (StreetAddress, City, State, ZipCode, CreatedAt, UpdatedAt, BreweryId)
-VALUES 
-    (
-        '1075 E 20th St',
-        'Chico',
-        'CA',
-        '95928',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        2
-    );
-
-INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
-VALUES
-    (
-        'Hexagenia',
-        'Ipa',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        1
-    );
-
-INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
-VALUES
-    (
-        'Widowmaker',
-        'DoubleIpa',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        1
-    );
-
-INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
-VALUES
-    (
-        'Hooked',
-        'Lager',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        1
-    );
-
-
-INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
-VALUES
-    (
-        'Pale Ale',
-        'PaleAle',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        2
-    );
-
-INSERT INTO [Beers] (Name, BeerStyle, CreatedAt, UpdatedAt, BreweryId)
-VALUES
-    (
-        'Old Chico',
-        'WheatAle',
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        DATETIME2FROMPARTS(2019, 10, 11, 12, 0, 0, 0, 0),
-        2
-    );
-
--- A few stored procedures for utility
--- DROP PROCEDURE IF EXISTS [GetBeersByBreweryId];
-CREATE PROCEDURE [GetBeersByBreweryId] @BreweryId INT
-AS
--- Remove the 'rows effected' message
-    SET NOCOUNT ON;
-
-    SELECT
-        [br].[Id],
-        [b].[Id],
-        [br].[Name],
-        [b].[Name],
-        [b].[BeerStyle]
-    FROM [Breweries] AS [br]
-             JOIN [Beers] AS [b] ON [br].[Id] = [b].[BreweryId]
-    WHERE [br].[Id] = @BreweryId;
-GO
-
--- DROP PROCEDURE IF EXISTS [GetAddressByBreweryId];
-CREATE PROCEDURE [GetAddressByBreweryId] @BreweryId INT
-AS
--- Remove the 'rows effected' message
-    SET NOCOUNT ON;
-
-    SELECT
-        [br].[Id],
-        [br].[Name],
-        [a].[City],
-        [a].[StreetAddress],
-        [a].[State],
-        [a].[ZipCode]
-    FROM [Breweries] AS [br]
-             JOIN [Addresses] AS [a] ON [br].[Id] = [a].[BreweryId]
-    WHERE [br].[Id] = @BreweryId;
-GO
-
--- Test our procedures, make sure everything looks good
-EXEC [GetBeersByBreweryId] 1;
-EXEC [GetBeersByBreweryId] 2;
-EXEC [GetAddressByBreweryId] 1;
-EXEC [GetAddressByBreweryId] 2;
+COMMIT TRANSACTION;
