@@ -5,7 +5,7 @@ namespace Dappery.Core.Beers.Commands.UpdateBeery
 
     public class UpdateBeerCommandValidator : AbstractValidator<UpdateBeerCommand>
     {
-        public UpdateBeerCommandHandler()
+        public UpdateBeerCommandValidator()
         {
             RuleFor(b => b.Dto)
                 .NotNull()
