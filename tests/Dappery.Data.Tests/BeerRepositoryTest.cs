@@ -140,7 +140,7 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var updatedBeerResult = await unitOfWork.BeerRepository.UpdateBeerAsync(beerToUpdate, CancellationTestToken);
+            await unitOfWork.BeerRepository.UpdateBeerAsync(beerToUpdate, CancellationTestToken);
             var updatedBeer = await unitOfWork.BeerRepository.GetBeerByIdAsync(beerToUpdate.Id, CancellationTestToken);
             unitOfWork.Commit();
             
@@ -164,14 +164,12 @@ namespace Dappery.Data.Tests
             (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationTestToken))?.Count().ShouldBe(5);
             
             // Act
-            var removeBeerCommand = await unitOfWork.BeerRepository.DeleteBeerAsync(1, CancellationTestToken);
+            await unitOfWork.BeerRepository.DeleteBeerAsync(1, CancellationTestToken);
             var breweryOfRemovedBeer = await unitOfWork.BreweryRepository.GetBreweryById(1, CancellationTestToken);
             (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationTestToken))?.Count().ShouldBe(4);
             unitOfWork.Commit();
             
             // Assert
-            removeBeerCommand.ShouldNotBeNull();
-            removeBeerCommand.ShouldBe(1);
             breweryOfRemovedBeer.ShouldNotBeNull();
             breweryOfRemovedBeer.Beers.ShouldNotBeNull();
             breweryOfRemovedBeer.Beers.ShouldNotBeEmpty();

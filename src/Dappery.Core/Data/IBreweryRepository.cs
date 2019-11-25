@@ -15,6 +15,6 @@ namespace Dappery.Core.Data
 
         Task UpdateBrewery(Brewery brewery, CancellationToken cancellationToken, bool updateAddress = false);
 
-        Task<int> DeleteBrewery(int breweryId, CancellationToken cancellationToken);
+        Task DeleteBrewery(int breweryId, CancellationToken cancellationToken);
     }
 }

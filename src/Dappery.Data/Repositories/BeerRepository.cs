@@ -137,7 +137,7 @@ namespace Dappery.Data.Repositories
             return beerId;
         }
 
-        public async Task<int> UpdateBeerAsync(Beer beer, CancellationToken cancellationToken)
+        public async Task UpdateBeerAsync(Beer beer, CancellationToken cancellationToken)
         {
             // Our application layer will be in charge of mapping the new properties to the entity layer,
             // as well as validating that the beer exists, so the data layer will only be responsible for
@@ -155,10 +155,10 @@ namespace Dappery.Data.Repositories
                 _dbTransaction,
                 cancellationToken: cancellationToken);
             
-            return await _dbConnection.ExecuteAsync(updateBeerCommand);
+            await _dbConnection.ExecuteAsync(updateBeerCommand);
         }
 
-        public async Task<int> DeleteBeerAsync(int beerId, CancellationToken cancellationToken)
+        public async Task DeleteBeerAsync(int beerId, CancellationToken cancellationToken)
         {
             // Our simplest command, just remove the beer directly from the database
             // Validation that the beer actually exists in the database will left to the application layer
@@ -168,7 +168,7 @@ namespace Dappery.Data.Repositories
                 _dbTransaction,
                 cancellationToken: cancellationToken);
             
-            return await _dbConnection.ExecuteAsync(deleteBeerCommand);
+            await _dbConnection.ExecuteAsync(deleteBeerCommand);
         }
     }
 }

@@ -214,14 +214,12 @@ namespace Dappery.Data.Tests
             
             
             // Act
-            var removedBrewery = await unitOfWork.BreweryRepository.DeleteBrewery(1,CancellationTestToken);
+            await unitOfWork.BreweryRepository.DeleteBrewery(1,CancellationTestToken);
             var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries(CancellationTestToken)).ToList();
             (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationToken.None))?.Count().ShouldBe(2);
             unitOfWork.Commit();
             
             // Assert
-            removedBrewery.ShouldNotBeNull();
-            removedBrewery.ShouldBe(1);
             breweries.ShouldNotBeNull();
             breweries.Count.ShouldBe(1);
             breweries.ShouldNotContain(br => br.Name == "Fall River Brewery");

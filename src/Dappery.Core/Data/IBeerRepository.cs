@@ -13,8 +13,8 @@ namespace Dappery.Core.Data
         
         Task<int> CreateBeerAsync(Beer beer, CancellationToken cancellationToken);
 
-        Task<int> UpdateBeerAsync(Beer beer, CancellationToken cancellationToken);
+        Task UpdateBeerAsync(Beer beer, CancellationToken cancellationToken);
 
-        Task<int> DeleteBeerAsync(int beer, CancellationToken cancellationToken);
+        Task DeleteBeerAsync(int beer, CancellationToken cancellationToken);
     }
 }

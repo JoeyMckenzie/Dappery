@@ -175,7 +175,7 @@ namespace Dappery.Data.Repositories
             }
         }
 
-        public async Task<int> DeleteBrewery(int breweryId, CancellationToken cancellationToken)
+        public async Task DeleteBrewery(int breweryId, CancellationToken cancellationToken)
         {
             // Because we setup out database providers to cascade delete on parent entity removal, we won't have to
             // worry about individually removing all the associated beers and address
@@ -187,7 +187,7 @@ namespace Dappery.Data.Repositories
                 _dbTransaction,
                 cancellationToken: cancellationToken);
             
-            return await _dbConnection.ExecuteAsync(deleteBreweryCommand);
+            await _dbConnection.ExecuteAsync(deleteBreweryCommand);
         }
     }
 }

@@ -6,6 +6,6 @@ namespace Dappery.Core.Beers.Commands.DeleteBeer
     {
         public DeleteBeerCommand(int beerId) => BeerId = beerId;
         
-        public int BeerId { get; set; }
+        public int BeerId { get; }
     }
 }
