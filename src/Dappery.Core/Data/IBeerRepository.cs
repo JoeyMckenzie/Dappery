@@ -1,19 +1,20 @@
 namespace Dappery.Core.Data
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Domain.Entities;
 
     public interface IBeerRepository
     {
-        Task<IEnumerable<Beer>?> GetAllBeers();
+        Task<IEnumerable<Beer>?> GetAllBeersAsync(CancellationToken cancellationToken);
         
-        Task<Beer> GetBeerById(int id);
+        Task<Beer> GetBeerByIdAsync(int id, CancellationToken cancellationToken);
+        
+        Task<int> CreateBeerAsync(Beer beer, CancellationToken cancellationToken);
 
-        Task<int> CreateBeer(Beer beer);
+        Task<int> UpdateBeerAsync(Beer beer, CancellationToken cancellationToken);
 
-        Task UpdateBeer(Beer beer);
-
-        Task<int> DeleteBeer(int beer);
+        Task<int> DeleteBeerAsync(int beer, CancellationToken cancellationToken);
     }
 }

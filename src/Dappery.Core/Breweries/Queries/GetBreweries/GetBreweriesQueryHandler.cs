@@ -21,8 +21,9 @@ namespace Dappery.Core.Breweries.Queries.GetBreweries
         public async Task<BreweryResourceList> Handle(GetBreweriesQuery request, CancellationToken cancellationToken)
         {
             // Grab a reference to all breweries in the database
-            var breweries = await _unitOfWork.BreweryRepository.GetAllBreweries();
+            var breweries = await _unitOfWork.BreweryRepository.GetAllBreweries(cancellationToken);
             
+            // Clean up our resources
             _unitOfWork.Commit();
             
             // Map each brewery to its corresponding DTO

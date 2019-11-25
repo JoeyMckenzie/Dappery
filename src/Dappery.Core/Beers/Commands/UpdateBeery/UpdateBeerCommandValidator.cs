@@ -10,10 +10,6 @@ namespace Dappery.Core.Beers.Commands.UpdateBeery
             RuleFor(b => b.Dto)
                 .NotNull()
                 .WithMessage("Must supply a beer to update");
-
-            RuleFor(b => b.Dto.BreweryId)
-                .NotNull()
-                .WithMessage("Must supply the brewery ID");
             
             RuleFor(b => b.Dto.Name)
                 .NotNullOrEmpty();

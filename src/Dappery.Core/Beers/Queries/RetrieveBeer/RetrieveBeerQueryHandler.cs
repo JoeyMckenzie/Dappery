@@ -21,10 +21,10 @@ namespace Dappery.Core.Beers.Queries.RetrieveBeer
         public async Task<BeerResource> Handle(RetrieveBeerQuery request, CancellationToken cancellationToken)
         {
             // Grab the beer from the ID
-            var beer = await _unitOfWork.BeerRepository.GetBeerById(request.Id);
+            var beer = await _unitOfWork.BeerRepository.GetBeerByIdAsync(request.Id, cancellationToken);
             
             // Invalidate the request if no beer is found
-            if (beer == null)
+            if (beer is null)
             {
                 throw new DapperyApiException($"No beer found with ID {request.Id}", HttpStatusCode.NotFound);
             }

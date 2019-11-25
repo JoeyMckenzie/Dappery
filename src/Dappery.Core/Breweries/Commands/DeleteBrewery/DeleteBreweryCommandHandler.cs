@@ -19,18 +19,16 @@ namespace Dappery.Core.Breweries.Commands.DeleteBrewery
         public async Task<Unit> Handle(DeleteBreweryCommand request, CancellationToken cancellationToken)
         {
             // Retrieve the brewery and invalidate the request if none is found
-            var breweryToDelete = await _unitOfWork.BreweryRepository.GetBreweryById(request.Id);
+            var breweryToDelete = await _unitOfWork.BreweryRepository.GetBreweryById(request.BreweryId, cancellationToken);
 
-            if (breweryToDelete == null)
+            if (breweryToDelete is null)
             {
-                throw new DapperyApiException($"No brewery was found with ID {request.Id}", HttpStatusCode.NotFound);
+                throw new DapperyApiException($"No brewery was found with ID {request.BreweryId}", HttpStatusCode.NotFound);
             }
             
             // Delete the brewery from the database
-            await _unitOfWork.BreweryRepository.DeleteBrewery(request.Id);
+            await _unitOfWork.BreweryRepository.DeleteBrewery(request.BreweryId, cancellationToken);
             _unitOfWork.Commit();
-            
-            // Commit the transaction and clean up our resources
             
             return Unit.Value;
         }

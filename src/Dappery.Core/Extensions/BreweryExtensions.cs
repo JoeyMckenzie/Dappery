@@ -16,7 +16,7 @@ namespace Dappery.Core.Extensions
                 Name = brewery.Name,
                 Beers = includeBeerList ? brewery.Beers.Select(b => new BeerDto
                 {
-                    Id = b.BreweryId,
+                    Id = b.Id,
                     Name = b.Name,
                     Style = b.BeerStyle.ToString()
                 }) : default,

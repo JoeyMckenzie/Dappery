@@ -20,7 +20,7 @@ namespace Dappery.Core.Beers.Queries.GetBeers
         public async Task<BeerResourceList> Handle(GetBeersQuery request, CancellationToken cancellationToken)
         {
             // Retrieve all of our beers from the database
-            var beers = await _unitOfWork.BeerRepository.GetAllBeers();
+            var beers = await _unitOfWork.BeerRepository.GetAllBeersAsync(cancellationToken);
             
             // Clean up our resources
             _unitOfWork.Commit();

@@ -4,8 +4,8 @@ namespace Dappery.Core.Breweries.Commands.DeleteBrewery
 
     public class DeleteBreweryCommand : IRequest<Unit>
     {
-        public DeleteBreweryCommand(int id) => Id = id;
+        public DeleteBreweryCommand(int id) => BreweryId = id;
         
-        public int Id { get; }
+        public int BreweryId { get; }
     }
 }

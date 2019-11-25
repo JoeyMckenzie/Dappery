@@ -22,10 +22,10 @@ namespace Dappery.Core.Breweries.Queries.RetrieveBrewery
         public async Task<BreweryResource> Handle(RetrieveBreweryQuery request, CancellationToken cancellationToken)
         {
             // Retrieve the brewery
-            var brewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Id);
+            var brewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Id, cancellationToken);
             
             // Invalidate the request if no brewery is found
-            if (brewery == null)
+            if (brewery is null)
             {
                 throw new DapperyApiException($"No brewery found with ID {request.Id}", HttpStatusCode.NotFound);
             }

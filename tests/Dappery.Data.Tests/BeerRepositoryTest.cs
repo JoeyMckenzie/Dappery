@@ -3,6 +3,7 @@ namespace Dappery.Data.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Domain.Entities;
     using Shouldly;
@@ -17,7 +18,7 @@ namespace Dappery.Data.Tests
             using var unitOfWork = UnitOfWork;
             
             // Act
-            var beers = (await unitOfWork.BeerRepository.GetAllBeers()).ToList();
+            var beers = (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationTestToken)).ToList();
             unitOfWork.Commit();
                 
             // Assert
@@ -44,14 +45,14 @@ namespace Dappery.Data.Tests
         {
             // Arrange, remove all the beers from our database
             using var unitOfWork = UnitOfWork;
-            await unitOfWork.BeerRepository.DeleteBeer(1);
-            await unitOfWork.BeerRepository.DeleteBeer(2);
-            await unitOfWork.BeerRepository.DeleteBeer(3);
-            await unitOfWork.BeerRepository.DeleteBeer(4);
-            await unitOfWork.BeerRepository.DeleteBeer(5);
+            await unitOfWork.BeerRepository.DeleteBeerAsync(1, CancellationTestToken);
+            await unitOfWork.BeerRepository.DeleteBeerAsync(2, CancellationTestToken);
+            await unitOfWork.BeerRepository.DeleteBeerAsync(3, CancellationTestToken);
+            await unitOfWork.BeerRepository.DeleteBeerAsync(4, CancellationTestToken);
+            await unitOfWork.BeerRepository.DeleteBeerAsync(5, CancellationTestToken);
             
             // Act
-            var beers = (await unitOfWork.BeerRepository.GetAllBeers()).ToList();
+            var beers = (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationTestToken)).ToList();
             unitOfWork.Commit();
                 
             // Assert
@@ -67,7 +68,7 @@ namespace Dappery.Data.Tests
             using var unitOfWork = UnitOfWork;
             
             // Act
-            var beer = await unitOfWork.BeerRepository.GetBeerById(1);
+            var beer = await unitOfWork.BeerRepository.GetBeerByIdAsync(1, CancellationTestToken);
             unitOfWork.Commit();
                 
             // Assert, validate a few properties
@@ -88,7 +89,7 @@ namespace Dappery.Data.Tests
             using var unitOfWork = UnitOfWork;
             
             // Act
-            var beer = await unitOfWork.BeerRepository.GetBeerById(10);
+            var beer = await unitOfWork.BeerRepository.GetBeerByIdAsync(10, CancellationTestToken);
             unitOfWork.Commit();
                 
             // Assert, validate a few properties
@@ -110,8 +111,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var beerId = await unitOfWork.BeerRepository.CreateBeer(beerToInsert);
-            var insertedBeer = await unitOfWork.BeerRepository.GetBeerById(beerId);
+            var beerId = await unitOfWork.BeerRepository.CreateBeerAsync(beerToInsert, CancellationTestToken);
+            var insertedBeer = await unitOfWork.BeerRepository.GetBeerByIdAsync(beerId, CancellationTestToken);
             unitOfWork.Commit();
             
             insertedBeer.ShouldNotBeNull();
@@ -139,10 +140,11 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            await unitOfWork.BeerRepository.UpdateBeer(beerToUpdate);
-            var updatedBeer = await unitOfWork.BeerRepository.GetBeerById(beerToUpdate.Id);
+            var updatedBeerResult = await unitOfWork.BeerRepository.UpdateBeerAsync(beerToUpdate, CancellationTestToken);
+            var updatedBeer = await unitOfWork.BeerRepository.GetBeerByIdAsync(beerToUpdate.Id, CancellationTestToken);
             unitOfWork.Commit();
             
+            updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldBeOfType<Beer>();
             updatedBeer.Brewery.ShouldNotBeNull();
@@ -159,12 +161,12 @@ namespace Dappery.Data.Tests
         {
             // Arrange
             using var unitOfWork = UnitOfWork;
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(5);
+            (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationTestToken))?.Count().ShouldBe(5);
             
             // Act
-            var removeBeerCommand = await unitOfWork.BeerRepository.DeleteBeer(1);
-            var breweryOfRemovedBeer = await unitOfWork.BreweryRepository.GetBreweryById(1);
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(4);
+            var removeBeerCommand = await unitOfWork.BeerRepository.DeleteBeerAsync(1, CancellationTestToken);
+            var breweryOfRemovedBeer = await unitOfWork.BreweryRepository.GetBreweryById(1, CancellationTestToken);
+            (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationTestToken))?.Count().ShouldBe(4);
             unitOfWork.Commit();
             
             // Assert

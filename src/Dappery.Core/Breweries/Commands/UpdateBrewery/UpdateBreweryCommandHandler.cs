@@ -3,9 +3,8 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using Dappery.Core.Extensions;
+    using Extensions;
     using Data;
-    using Domain.Dtos.Brewery;
     using Domain.Media;
     using Exceptions;
     using MediatR;
@@ -22,12 +21,12 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
         public async Task<BreweryResource> Handle(UpdateBreweryCommand request, CancellationToken cancellationToken)
         {
             // Retrieve the brewery on the request
-            var breweryToUpdate = await _unitOfWork.BreweryRepository.GetBreweryById(request.Id);
+            var breweryToUpdate = await _unitOfWork.BreweryRepository.GetBreweryById(request.BreweryId, cancellationToken);
 
             // Invalidate the request if no brewery was found
-            if (breweryToUpdate == null)
+            if (breweryToUpdate is null)
             {
-                throw new DapperyApiException($"No brewery was found with ID {request.Id}", HttpStatusCode.NotFound);   
+                throw new DapperyApiException($"No brewery was found with ID {request.BreweryId}", HttpStatusCode.NotFound);   
             }
             
             // Update the properties on the brewery entity
@@ -44,10 +43,10 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
             }
             
             // Update the brewery in the database
-            await _unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, updateBrewery);
+            await _unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, cancellationToken, updateBrewery);
             
             // Grab a reference to the updated brewery
-            var updatedBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Id);
+            var updatedBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.BreweryId, cancellationToken);
             
             // Commit the transaction and clean up our resources
             _unitOfWork.Commit();

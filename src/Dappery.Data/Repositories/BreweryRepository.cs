@@ -4,6 +4,7 @@ namespace Dappery.Data.Repositories
     using System.Data;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using Core.Data;
     using Dapper;
@@ -22,15 +23,25 @@ namespace Dappery.Data.Repositories
             _rowInsertRetrievalQuery = rowInsertRetrievalQuery;
         }
 
-        public async Task<Brewery> GetBreweryById(int id)
+        public async Task<Brewery> GetBreweryById(int id, CancellationToken cancellationToken)
         {
-            var beersFromBrewery = (await _dbConnection.QueryAsync<Beer>(
+            // Instantiate our commands
+            var beersFromBreweryCommand = new CommandDefinition(
                 @"SELECT * FROM Beers WHERE BreweryId = @Id",
-                new {Id = id},
-                _dbTransaction)).ToList();
+                new { Id = id },
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+                
+            var breweryCommand = new CommandDefinition(
+                @"SELECT br.*, a.* FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id WHERE br.Id = @Id",
+                new { Id = id },
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+            
+            var beersFromBrewery = (await _dbConnection.QueryAsync<Beer>(beersFromBreweryCommand)).ToList();
             
             return (await _dbConnection.QueryAsync<Brewery, Address, Brewery>(
-                @"SELECT br.*, a.* FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id WHERE br.Id = @Id",
+                breweryCommand,
                 (brewery, address) =>
                 {
                     // Since breweries have a one-to-one relation with address, we can initialize that mapping here
@@ -46,21 +57,28 @@ namespace Dappery.Data.Repositories
                     }
                     
                     return brewery;
-                },
-                new { Id = id },
-                _dbTransaction)).FirstOrDefault();
+                })).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Brewery>> GetAllBreweries()
+        public async Task<IEnumerable<Brewery>> GetAllBreweries(CancellationToken cancellationToken)
         {
-            // Grab a reference to all beers so we can map them to there corresponding breweries
-            var beers = (await _dbConnection.QueryAsync<Beer>(
+            // Instantiate our commands to utilize our cancellation token
+            var beersCommand = new CommandDefinition(
                 "SELECT * FROM Beers",
-                transaction: _dbTransaction)).ToList();
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+            
+            var beersJoinedOnBreweriesCommand = new CommandDefinition(
+                "SELECT * FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id",
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+            
+            // Grab a reference to all beers so we can map them to there corresponding breweries
+            var beers = (await _dbConnection.QueryAsync<Beer>(beersCommand)).ToList();
             
             return await _dbConnection.QueryAsync<Brewery, Address, Brewery>(
                 // We join with addresses as there's a one-to-one relation with breweries, making the query a little less intensive
-                "SELECT * FROM Breweries br INNER JOIN Addresses a ON a.BreweryId = br.Id",
+                beersJoinedOnBreweriesCommand,
                 (brewery, address) =>
                 {
                     // Map the address to the brewery
@@ -76,25 +94,27 @@ namespace Dappery.Data.Repositories
                     }
                     
                     return brewery;
-                },
-                transaction: _dbTransaction);
+                });
         }
         
-        public async Task<int> CreateBrewery(Brewery brewery)
+        public async Task<int> CreateBrewery(Brewery brewery, CancellationToken cancellationToken)
         {
             // Grab a reference to the address
             var address = brewery.Address;
             var breweryInsertSql =
                 new StringBuilder(@"INSERT INTO Breweries (Name, CreatedAt, UpdatedAt) VALUES (@Name, @CreatedAt, @UpdatedAt)");
             
-            // Let's add the brewery
-            var breweryId = await _dbConnection.ExecuteScalarAsync<int>(
+            // Instantiate our commands to utilize our cancellation token
+            var breweryInsertCommand = new CommandDefinition(
                 breweryInsertSql.Append(_rowInsertRetrievalQuery).ToString(),
                 new { brewery.Name, brewery.CreatedAt, brewery.UpdatedAt },
-                _dbTransaction);
+                _dbTransaction,
+                cancellationToken: cancellationToken);
 
-            // One of our business rules is that a brewery must have an associated address
-            await _dbConnection.ExecuteAsync(
+            // Let's add the brewery
+            var breweryId = await _dbConnection.ExecuteScalarAsync<int>(breweryInsertCommand);
+            
+            var addressInsertCommand = new CommandDefinition(
                 @"INSERT INTO Addresses (StreetAddress, City, State, ZipCode, CreatedAt, UpdatedAt, BreweryId)
                         VALUES (@StreetAddress, @City, @State, @ZipCode, @CreatedAt, @UpdatedAt, @BreweryId)",
                 new
@@ -107,15 +127,19 @@ namespace Dappery.Data.Repositories
                     address?.UpdatedAt,
                     BreweryId = breweryId
                 }, 
-                _dbTransaction);
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+
+            // One of our business rules is that a brewery must have an associated address
+            await _dbConnection.ExecuteAsync(addressInsertCommand);
             
             return breweryId;
         }
 
-        public async Task UpdateBrewery(Brewery brewery, bool updateAddress)
+        public async Task UpdateBrewery(Brewery brewery, CancellationToken cancellationToken, bool updateAddress = false)
         {
-            // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
-            await _dbConnection.ExecuteAsync(
+            // Instantiate our commands to utilize our cancellation token
+            var breweryUpdateCommand = new CommandDefinition(
                 @"UPDATE Breweries SET Name = @Name, UpdatedAt = @UpdatedAt WHERE Id = @Id",
                 new
                 {
@@ -123,13 +147,15 @@ namespace Dappery.Data.Repositories
                     brewery.UpdatedAt,
                     brewery.Id
                 },
-                _dbTransaction);
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+            
+            // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
+            await _dbConnection.ExecuteAsync(breweryUpdateCommand);
 
             if (brewery.Address != null && updateAddress)
             {
-                // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
-                // For now, we won't allow users to swap breweries address to another address
-                await _dbConnection.ExecuteAsync(
+                var addressUpdateCommand = new CommandDefinition(
                     @"UPDATE Addresses SET StreetAddress = @StreetAddress, City = @City, ZipCode = @ZipCode, State = @State, UpdatedAt = @UpdatedAt WHERE Id = @Id",
                     new
                     {
@@ -140,20 +166,28 @@ namespace Dappery.Data.Repositories
                         brewery.Address.UpdatedAt,
                         brewery.Address.Id
                     },
-                    _dbTransaction);
+                    _dbTransaction,
+                    cancellationToken: cancellationToken);
+                
+                // Again, we'll assume the brewery details are being validated and mapped properly in the application layer
+                // For now, we won't allow users to swap breweries address to another address
+                await _dbConnection.ExecuteAsync(addressUpdateCommand);
             }
         }
 
-        public async Task<int> DeleteBrewery(int breweryId)
+        public async Task<int> DeleteBrewery(int breweryId, CancellationToken cancellationToken)
         {
             // Because we setup out database providers to cascade delete on parent entity removal, we won't have to
             // worry about individually removing all the associated beers and address
             // NOTE: Because we don't directly expose CRUD operations on the address table, we'll validate the cascade
             // remove directly in the database for now
-            return await _dbConnection.ExecuteAsync(
-                    @"DELETE FROM Breweries WHERE Id = @Id",
+            var deleteBreweryCommand = new CommandDefinition(
+                @"DELETE FROM Breweries WHERE Id = @Id",
                 new { Id = breweryId },
-                _dbTransaction);
+                _dbTransaction,
+                cancellationToken: cancellationToken);
+            
+            return await _dbConnection.ExecuteAsync(deleteBreweryCommand);
         }
     }
 }

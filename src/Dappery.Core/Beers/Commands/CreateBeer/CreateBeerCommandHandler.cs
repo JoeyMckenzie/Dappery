@@ -23,7 +23,7 @@ namespace Dappery.Core.Beers.Commands.CreateBeer
         public async Task<BeerResource> Handle(CreateBeerCommand request, CancellationToken cancellationToken)
         {
             // Check to make sure the brewery exists from the given brewery ID on the request
-            var existingBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Dto.BreweryId);
+            var existingBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Dto.BreweryId, cancellationToken);
 
             // Invalidate the request if no corresponding brewery exists
             // Since we're not overloading the '==' operator, let's use the 'is' comparison here
@@ -46,8 +46,8 @@ namespace Dappery.Core.Beers.Commands.CreateBeer
             };
 
             // Add the record to the database and retrieve the record after we create it
-            var createdBeerId = await _unitOfWork.BeerRepository.CreateBeer(beerToAdd);
-            var createdBeer = await _unitOfWork.BeerRepository.GetBeerById(createdBeerId);
+            var createdBeerId = await _unitOfWork.BeerRepository.CreateBeerAsync(beerToAdd, cancellationToken);
+            var createdBeer = await _unitOfWork.BeerRepository.GetBeerByIdAsync(createdBeerId, cancellationToken);
             _unitOfWork.Commit();
 
             // Return the mapped beer

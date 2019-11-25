@@ -1,6 +1,7 @@
 namespace Dappery.Data.Tests
 {
     using System;
+    using System.Threading;
     using Core.Data;
 
     public class TestFixture : IDisposable
@@ -11,6 +12,8 @@ namespace Dappery.Data.Tests
         }
         
         protected IUnitOfWork UnitOfWork { get; }
+
+        protected CancellationToken CancellationTestToken => CancellationToken.None;
         
         public void Dispose()
         {

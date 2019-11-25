@@ -3,6 +3,7 @@ namespace Dappery.Data.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Domain.Entities;
     using Shouldly;
@@ -17,7 +18,7 @@ namespace Dappery.Data.Tests
             using var unitOfWork = UnitOfWork;
 
             // Act
-            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries(CancellationTestToken)).ToList();
             unitOfWork.Commit();
 
             // Assert
@@ -44,11 +45,11 @@ namespace Dappery.Data.Tests
         {
             // Arrange
             using var unitOfWork = UnitOfWork;
-            await unitOfWork.BreweryRepository.DeleteBrewery(1);
-            await unitOfWork.BreweryRepository.DeleteBrewery(2);
+            await unitOfWork.BreweryRepository.DeleteBrewery(1, CancellationTestToken);
+            await unitOfWork.BreweryRepository.DeleteBrewery(2, CancellationTestToken);
 
             // Act
-            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries(CancellationTestToken)).ToList();
             unitOfWork.Commit();
 
             // Assert
@@ -64,7 +65,7 @@ namespace Dappery.Data.Tests
             using var unitOfWork = UnitOfWork;
 
             // Act
-            var brewery = await unitOfWork.BreweryRepository.GetBreweryById(1);
+            var brewery = await unitOfWork.BreweryRepository.GetBreweryById(1, CancellationTestToken);
             unitOfWork.Commit();
 
             // Assert
@@ -86,7 +87,7 @@ namespace Dappery.Data.Tests
             using var unitOfWork = UnitOfWork;
 
             // Act
-            var brewery = await unitOfWork.BreweryRepository.GetBreweryById(11);
+            var brewery = await unitOfWork.BreweryRepository.GetBreweryById(11, CancellationTestToken);
             unitOfWork.Commit();
 
             // Assert
@@ -115,8 +116,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            var breweryId = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert);
-            var insertedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryId);
+            var breweryId = await unitOfWork.BreweryRepository.CreateBrewery(breweryToInsert, CancellationTestToken);
+            var insertedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryId, CancellationTestToken);
             unitOfWork.Commit();
             
             // Assert
@@ -150,8 +151,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate);
-            var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
+            await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, CancellationTestToken);
+            var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id, CancellationTestToken);
             unitOfWork.Commit();
             
             // Assert
@@ -187,8 +188,8 @@ namespace Dappery.Data.Tests
             };
             
             // Act
-            await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, true);
-            var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id);
+            await unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, CancellationTestToken, true);
+            var updatedBrewery = await unitOfWork.BreweryRepository.GetBreweryById(breweryToUpdate.Id, CancellationTestToken);
             unitOfWork.Commit();
             
             // Assert
@@ -208,14 +209,14 @@ namespace Dappery.Data.Tests
         {
             // Arrange
             using var unitOfWork = UnitOfWork;
-            (await unitOfWork.BreweryRepository.GetAllBreweries())?.Count().ShouldBe(2);
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(5);
+            (await unitOfWork.BreweryRepository.GetAllBreweries(CancellationTestToken))?.Count().ShouldBe(2);
+            (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationToken.None))?.Count().ShouldBe(5);
             
             
             // Act
-            var removedBrewery = await unitOfWork.BreweryRepository.DeleteBrewery(1);
-            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries()).ToList();
-            (await unitOfWork.BeerRepository.GetAllBeers())?.Count().ShouldBe(2);
+            var removedBrewery = await unitOfWork.BreweryRepository.DeleteBrewery(1,CancellationTestToken);
+            var breweries = (await unitOfWork.BreweryRepository.GetAllBreweries(CancellationTestToken)).ToList();
+            (await unitOfWork.BeerRepository.GetAllBeersAsync(CancellationToken.None))?.Count().ShouldBe(2);
             unitOfWork.Commit();
             
             // Assert

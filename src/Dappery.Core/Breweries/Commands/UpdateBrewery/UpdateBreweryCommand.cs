@@ -6,9 +6,9 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
 
     public class UpdateBreweryCommand : IRequest<BreweryResource>
     {
-        public UpdateBreweryCommand(UpdateBreweryDto dto, int id) => (Dto, Id) = (dto, id);
+        public UpdateBreweryCommand(UpdateBreweryDto dto, int breweryId) => (Dto, BreweryId) = (dto, breweryId);
 
-        public int Id { get; }
+        public int BreweryId { get; }
             
         public UpdateBreweryDto Dto { get; }
     }
