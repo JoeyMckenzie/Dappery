@@ -28,21 +28,21 @@ namespace Dappery.Core.Tests.Breweries
 
             // Act
             var handler = new CreateBreweryCommandHandler(UnitOfWork);
-            var result = await handler.Handle(new CreateBreweryCommand(createBreweryDto), CancellationToken.None);
+            var createdBrewery = await handler.Handle(new CreateBreweryCommand(createBreweryDto), CancellationToken.None);
 
             // Assert
-            result.ShouldNotBeNull();
-            result.Brewery.ShouldNotBeNull();
-            result.Brewery.ShouldBeOfType<BreweryDto>();
-            result.Brewery.Name.ShouldNotBeNull();
-            result.Brewery.Name.ShouldBe(createBreweryDto.Name);
-            result.Brewery.Address.ShouldNotBeNull();
-            result.Brewery.Address.City.ShouldBe(createBreweryDto.Address.City);
-            result.Brewery.Address.State.ShouldBe(createBreweryDto.Address.State);
-            result.Brewery.Address.StreetAddress.ShouldBe(createBreweryDto.Address.StreetAddress);
-            result.Brewery.Address.ZipCode.ShouldBe(createBreweryDto.Address.ZipCode);
-            result.Brewery.Beers.ShouldBeEmpty();
-            result.Brewery.BeerCount.ShouldBe(0);
+            createdBrewery.ShouldNotBeNull();
+            createdBrewery.Self.ShouldNotBeNull();
+            createdBrewery.Self.ShouldBeOfType<BreweryDto>();
+            createdBrewery.Self.Name.ShouldNotBeNull();
+            createdBrewery.Self.Name.ShouldBe(createBreweryDto.Name);
+            createdBrewery.Self.Address.ShouldNotBeNull();
+            createdBrewery.Self.Address.City.ShouldBe(createBreweryDto.Address.City);
+            createdBrewery.Self.Address.State.ShouldBe(createBreweryDto.Address.State);
+            createdBrewery.Self.Address.StreetAddress.ShouldBe(createBreweryDto.Address.StreetAddress);
+            createdBrewery.Self.Address.ZipCode.ShouldBe(createBreweryDto.Address.ZipCode);
+            createdBrewery.Self.Beers.ShouldBeEmpty();
+            createdBrewery.Self.BeerCount.ShouldBe(0);
         }
     }
 }

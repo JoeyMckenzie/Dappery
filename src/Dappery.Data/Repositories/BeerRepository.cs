@@ -23,7 +23,7 @@ namespace Dappery.Data.Repositories
             _insertRowRetrievalQuery = insertRowRetrievalQuery;
         }
         
-        public async Task<IEnumerable<Beer>?> GetAllBeersAsync(CancellationToken token)
+        public async Task<IEnumerable<Beer>> GetAllBeersAsync(CancellationToken token)
         {
             // Initialize our commands to utilize our cancellation token
             var addressCommand = new CommandDefinition(

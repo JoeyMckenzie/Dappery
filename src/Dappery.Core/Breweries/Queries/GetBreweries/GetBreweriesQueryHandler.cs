@@ -1,12 +1,11 @@
-using System.Linq;
-using Dappery.Core.Extensions;
-
 namespace Dappery.Core.Breweries.Queries.GetBreweries
 {
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Data;
     using Domain.Media;
+    using Extensions;
     using MediatR;
 
     public class GetBreweriesQueryHandler : IRequestHandler<GetBreweriesQuery, BreweryResourceList>
@@ -26,8 +25,11 @@ namespace Dappery.Core.Breweries.Queries.GetBreweries
             // Clean up our resources
             _unitOfWork.Commit();
             
+            // Map our breweries from the returned query
+            var mappedBreweries = breweries.Select(b => b.ToBreweryDto());
+            
             // Map each brewery to its corresponding DTO
-            return new BreweryResourceList(breweries.Select(b => b.ToBreweryDto()));
+            return new BreweryResourceList(mappedBreweries);
         }
     }
 }

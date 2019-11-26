@@ -1,13 +1,13 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Dappery.Core.Data;
-using Dappery.Core.Extensions;
-using Dappery.Domain.Media;
-using MediatR;
-
 namespace Dappery.Core.Beers.Queries.GetBeers
 {
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Data;
+    using Domain.Media;
+    using Extensions;
+    using MediatR;
+
     public class GetBeersQueryHandler : IRequestHandler<GetBeersQuery, BeerResourceList>
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -7,7 +7,7 @@ namespace Dappery.Core.Data
 
     public interface IBeerRepository
     {
-        Task<IEnumerable<Beer>?> GetAllBeersAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<Beer>> GetAllBeersAsync(CancellationToken cancellationToken);
         
         Task<Beer> GetBeerByIdAsync(int id, CancellationToken cancellationToken);
         
