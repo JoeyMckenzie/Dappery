@@ -29,6 +29,7 @@ namespace Dappery.Core.Beers.Commands.DeleteBeer
             
             // Remove the beer from the database
             await _unitOfWork.BeerRepository.DeleteBeerAsync(request.BeerId, cancellationToken);
+            _unitOfWork.Commit();
 
             return Unit.Value;
         }

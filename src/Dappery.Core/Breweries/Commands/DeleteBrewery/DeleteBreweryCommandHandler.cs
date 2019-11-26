@@ -21,6 +21,7 @@ namespace Dappery.Core.Breweries.Commands.DeleteBrewery
             // Retrieve the brewery and invalidate the request if none is found
             var breweryToDelete = await _unitOfWork.BreweryRepository.GetBreweryById(request.BreweryId, cancellationToken);
 
+            // Invalidate the request if no brewery is found
             if (breweryToDelete is null)
             {
                 throw new DapperyApiException($"No brewery was found with ID {request.BreweryId}", HttpStatusCode.NotFound);
