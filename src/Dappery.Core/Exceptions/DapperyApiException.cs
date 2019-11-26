@@ -13,13 +13,6 @@ namespace Dappery.Core.Exceptions
             ApiErrors = new List<DapperyApiError>();
         }
 
-        public DapperyApiException(string message, HttpStatusCode statusCode, ICollection<DapperyApiError> apiErrors)
-            : base(message)
-        {
-            StatusCode = statusCode;
-            ApiErrors = apiErrors;
-        }
-
         public HttpStatusCode StatusCode { get; }
 
         public ICollection<DapperyApiError> ApiErrors { get; }

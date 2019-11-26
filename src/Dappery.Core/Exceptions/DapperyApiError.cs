@@ -2,11 +2,6 @@ namespace Dappery.Core.Exceptions
 {
     public class DapperyApiError
     {
-        public DapperyApiError(string errorMessage)
-        {
-            ErrorMessage = errorMessage;
-        }
-
         public DapperyApiError(string errorMessage, string propertyName)
         {
             ErrorMessage = errorMessage;
@@ -15,6 +10,6 @@ namespace Dappery.Core.Exceptions
 
         public string ErrorMessage { get; }
 
-        public string? PropertyName { get; }
+        public string PropertyName { get; }
     }
 }
