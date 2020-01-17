@@ -3,7 +3,6 @@ namespace Dappery.Data.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Domain.Entities;
     using Shouldly;
@@ -26,8 +25,8 @@ namespace Dappery.Data.Tests
             beers.ShouldBeOfType<List<Beer>>();
             beers.ShouldNotBeEmpty();
             beers.All(b => b.Brewery != null).ShouldBeTrue();
-            beers.All(b => b.Brewery.Address != null).ShouldBeTrue();
-            beers.All(b => b.Brewery.Address.BreweryId == b.Brewery.Id).ShouldBeTrue();
+            beers.All(b => b.Brewery!.Address != null).ShouldBeTrue();
+            beers.All(b => b.Brewery!.Address!.BreweryId == b.Brewery.Id).ShouldBeTrue();
             beers.ShouldContain(b => b.Name == "Hexagenia");
             beers.FirstOrDefault(b => b.Name == "Hexagenia")?.BeerStyle.ShouldBe(BeerStyle.Ipa);
             beers.ShouldContain(b => b.Name == "Widowmaker");
@@ -76,10 +75,10 @@ namespace Dappery.Data.Tests
             beer.ShouldBeOfType<Beer>();
             beer.Name.ShouldBe("Hexagenia");
             beer.BeerStyle.ShouldBe(BeerStyle.Ipa);
-            beer.Brewery.ShouldNotBeNull();
-            beer.Brewery.Name.ShouldBe("Fall River Brewery");
-            beer.Brewery.Address.ShouldNotBeNull();
-            beer.Brewery.Address.City.ShouldBe("Redding");
+            beer.Brewery?.ShouldNotBeNull();
+            beer.Brewery?.Name.ShouldBe("Fall River Brewery");
+            beer.Brewery?.Address?.ShouldNotBeNull();
+            beer.Brewery?.Address?.City.ShouldBe("Redding");
         }
         
         [Fact]
@@ -117,12 +116,12 @@ namespace Dappery.Data.Tests
             
             insertedBeer.ShouldNotBeNull();
             insertedBeer.ShouldBeOfType<Beer>();
-            insertedBeer.Brewery.ShouldNotBeNull();
-            insertedBeer.Brewery.Address.ShouldNotBeNull();
-            insertedBeer.Brewery.Beers.ShouldNotBeEmpty();
-            insertedBeer.Brewery.Beers.Count.ShouldBe(4);
-            insertedBeer.Brewery.Beers.ShouldContain(b => b.Id == insertedBeer.Id);
-            insertedBeer.Brewery.Beers.FirstOrDefault(b => b.Id == insertedBeer.Id)?.Name.ShouldBe(beerToInsert.Name);
+            insertedBeer.Brewery!.ShouldNotBeNull();
+            insertedBeer.Brewery!.Address!.ShouldNotBeNull();
+            insertedBeer.Brewery!.Beers.ShouldNotBeEmpty();
+            insertedBeer.Brewery!.Beers.Count.ShouldBe(4);
+            insertedBeer.Brewery!.Beers.ShouldContain(b => b.Id == insertedBeer.Id);
+            insertedBeer.Brewery!.Beers.FirstOrDefault(b => b.Id == insertedBeer.Id)?.Name.ShouldBe(beerToInsert.Name);
         }
         
         [Fact]
@@ -147,13 +146,13 @@ namespace Dappery.Data.Tests
             updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldNotBeNull();
             updatedBeer.ShouldBeOfType<Beer>();
-            updatedBeer.Brewery.ShouldNotBeNull();
-            updatedBeer.Brewery.Address.ShouldNotBeNull();
-            updatedBeer.Brewery.Beers.ShouldNotBeEmpty();
-            updatedBeer.Brewery.Beers.Count.ShouldBe(3);
-            updatedBeer.Brewery.Beers.ShouldContain(b => b.Id == beerToUpdate.Id);
-            updatedBeer.Brewery.Beers.ShouldNotContain(b => b.Name == "Hexagenia");
-            updatedBeer.Brewery.Beers.FirstOrDefault(b => b.Id == beerToUpdate.Id)?.Name.ShouldBe(beerToUpdate.Name);
+            updatedBeer.Brewery?.ShouldNotBeNull();
+            updatedBeer.Brewery?.Address?.ShouldNotBeNull();
+            updatedBeer.Brewery?.Beers.ShouldNotBeEmpty();
+            updatedBeer.Brewery?.Beers.Count.ShouldBe(3);
+            updatedBeer.Brewery?.Beers.ShouldContain(b => b.Id == beerToUpdate.Id);
+            updatedBeer.Brewery?.Beers.ShouldNotContain(b => b.Name == "Hexagenia");
+            updatedBeer.Brewery?.Beers.FirstOrDefault(b => b.Id == beerToUpdate.Id)?.Name.ShouldBe(beerToUpdate.Name);
         }
 
         [Fact]

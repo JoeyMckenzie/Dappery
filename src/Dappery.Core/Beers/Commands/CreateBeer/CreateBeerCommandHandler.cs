@@ -29,7 +29,7 @@ namespace Dappery.Core.Beers.Commands.CreateBeer
             // Since we're not overloading the '==' operator, let's use the 'is' comparison here
             if (existingBrewery is null)
             {
-                throw new DapperyApiException($"No brewery found with ID {request.Dto.BreweryId}", HttpStatusCode.NotFound);
+                throw new DapperyApiException($"Cannot create beer with brewery ID {request.Dto.BreweryId} as that brewery does not exist", HttpStatusCode.BadRequest);
             }
 
             // Attempt to parse the incoming BeerStyle enumeration value

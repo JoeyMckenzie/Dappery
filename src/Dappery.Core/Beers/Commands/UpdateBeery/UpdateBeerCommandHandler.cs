@@ -35,13 +35,27 @@ namespace Dappery.Core.Beers.Commands.UpdateBeery
             var parsedBeerStyle = Enum.TryParse(request.Dto.Style, true, out BeerStyle beerStyle);
             
             // Update the fields on the existing beer
-            existingBeer.BreweryId = request.Dto.BreweryId ?? existingBeer.BreweryId;
             existingBeer.BeerStyle = parsedBeerStyle ? beerStyle : BeerStyle.Other;
             existingBeer.Name = request.Dto.Name;
             existingBeer.UpdatedAt = DateTime.UtcNow;
-            await _unitOfWork.BeerRepository.UpdateBeerAsync(existingBeer, cancellationToken);
             
-            // Grab the newly return beer for the response
+            // If the user wants to update the brewery the beer is attached to, verify first that it exists
+            if (request.Dto.BreweryId.HasValue)
+            {
+                // Retrieve the brewery, or invalidate the request if none is returned
+                var existingBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.Dto.BreweryId.Value, cancellationToken);
+                
+                if (existingBrewery is null)
+                {
+                    throw new DapperyApiException($"Cannot update brewery as brewery with ID {request.Dto.BreweryId.Value} does not exists", HttpStatusCode.BadRequest);
+                }
+
+                existingBeer.BreweryId = request.Dto.BreweryId.Value;
+            }
+            
+            
+            // Perform the update and grab the newly return beer for the response
+            await _unitOfWork.BeerRepository.UpdateBeerAsync(existingBeer, cancellationToken);
             var updatedBeer = await _unitOfWork.BeerRepository.GetBeerByIdAsync(existingBeer.Id, cancellationToken);
             _unitOfWork.Commit();
             

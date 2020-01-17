@@ -36,13 +36,9 @@ namespace Dappery.Core.Breweries.Commands.CreateBrewery
                 }
             };
             
-            // Create the brewery and commit the transaction against the database and clean up our resources
+            // Create our brewery, retrieve the brewery so we can map it to the response, and clean up our resources
             var breweryId = await _unitOfWork.BreweryRepository.CreateBrewery(breweryToCreate, cancellationToken);
-
-            // Grab a reference to our newly inserted brewery
             var insertedBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(breweryId, cancellationToken);
-            
-            // Commit the transaction and clean up our resources
             _unitOfWork.Commit();
             
             // Map and return the response

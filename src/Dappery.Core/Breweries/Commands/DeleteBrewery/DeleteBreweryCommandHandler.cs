@@ -27,7 +27,7 @@ namespace Dappery.Core.Breweries.Commands.DeleteBrewery
                 throw new DapperyApiException($"No brewery was found with ID {request.BreweryId}", HttpStatusCode.NotFound);
             }
             
-            // Delete the brewery from the database
+            // Delete the brewery from the database and clean up our resources once we know we have a valid beer
             await _unitOfWork.BreweryRepository.DeleteBrewery(request.BreweryId, cancellationToken);
             _unitOfWork.Commit();
             

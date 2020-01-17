@@ -1,6 +1,7 @@
 namespace Dappery.Core.Tests
 {
     using System;
+    using System.Threading;
     using Dappery.Data;
     using Data;
 
@@ -13,6 +14,8 @@ namespace Dappery.Core.Tests
         }
         
         protected IUnitOfWork UnitOfWork { get; }
+        
+        protected static CancellationToken CancellationTestToken => CancellationToken.None;
         
         public void Dispose()
         {

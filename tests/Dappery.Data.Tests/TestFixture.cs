@@ -13,7 +13,7 @@ namespace Dappery.Data.Tests
         
         protected IUnitOfWork UnitOfWork { get; }
 
-        protected CancellationToken CancellationTestToken => CancellationToken.None;
+        protected static CancellationToken CancellationTestToken => CancellationToken.None;
         
         public void Dispose()
         {

@@ -123,9 +123,9 @@ namespace Dappery.Data.Tests
             // Assert
             insertedBrewery.ShouldNotBeNull();
             insertedBrewery.ShouldBeOfType<Brewery>();
-            insertedBrewery.Address.ShouldNotBeNull();
-            insertedBrewery.Address.StreetAddress.ShouldBe(breweryToInsert.Address.StreetAddress);
-            insertedBrewery.Address.BreweryId.ShouldBe(3);
+            insertedBrewery.Address?.ShouldNotBeNull();
+            insertedBrewery.Address?.StreetAddress.ShouldBe(breweryToInsert.Address.StreetAddress);
+            insertedBrewery.Address?.BreweryId.ShouldBe(3);
             insertedBrewery.Beers.ShouldBeEmpty();
         }
 
@@ -158,9 +158,9 @@ namespace Dappery.Data.Tests
             // Assert
             updatedBrewery.ShouldNotBeNull();
             updatedBrewery.ShouldBeOfType<Brewery>();
-            updatedBrewery.Address.ShouldNotBeNull();
-            updatedBrewery.Address.StreetAddress.ShouldBe(breweryToUpdate.Address.StreetAddress);
-            updatedBrewery.Address.BreweryId.ShouldBe(2);
+            updatedBrewery.Address?.ShouldNotBeNull();
+            updatedBrewery.Address?.StreetAddress.ShouldBe(breweryToUpdate.Address.StreetAddress);
+            updatedBrewery.Address?.BreweryId.ShouldBe(2);
             updatedBrewery.Beers.ShouldNotBeNull();
             updatedBrewery.Beers.ShouldNotBeEmpty();
         }
@@ -195,11 +195,11 @@ namespace Dappery.Data.Tests
             // Assert
             updatedBrewery.ShouldNotBeNull();
             updatedBrewery.ShouldBeOfType<Brewery>();
-            updatedBrewery.Address.ShouldNotBeNull();
-            updatedBrewery.Address.StreetAddress.ShouldBe(breweryToUpdate.Address.StreetAddress);
-            updatedBrewery.Address.ZipCode.ShouldBe(breweryToUpdate.Address.ZipCode);
-            updatedBrewery.Address.City.ShouldBe(breweryToUpdate.Address.City);
-            updatedBrewery.Address.BreweryId.ShouldBe(2);
+            updatedBrewery.Address?.ShouldNotBeNull();
+            updatedBrewery.Address?.StreetAddress.ShouldBe(breweryToUpdate.Address.StreetAddress);
+            updatedBrewery.Address?.ZipCode.ShouldBe(breweryToUpdate.Address.ZipCode);
+            updatedBrewery.Address?.City.ShouldBe(breweryToUpdate.Address.City);
+            updatedBrewery.Address?.BreweryId.ShouldBe(2);
             updatedBrewery.Beers.ShouldNotBeNull();
             updatedBrewery.Beers.ShouldNotBeEmpty();
         }

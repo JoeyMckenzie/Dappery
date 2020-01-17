@@ -33,6 +33,7 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
             breweryToUpdate.Name = request.Dto.Name;
             var updateBrewery = false;
 
+            // If the request contains an address, set the flag for the persistence layer to update the address table
             if (request.Dto.Address != null && breweryToUpdate.Address != null)
             {
                 updateBrewery = true;
@@ -42,13 +43,9 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
                 breweryToUpdate.Address.ZipCode = request.Dto.Address.ZipCode;
             }
             
-            // Update the brewery in the database
+            // Update the brewery in the database, retrieve it, and clean up our resources
             await _unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, cancellationToken, updateBrewery);
-            
-            // Grab a reference to the updated brewery
             var updatedBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.BreweryId, cancellationToken);
-            
-            // Commit the transaction and clean up our resources
             _unitOfWork.Commit();
             
             // Map and return the brewery

@@ -5,6 +5,7 @@ namespace Dappery.Core.Tests.Breweries
     using Core.Breweries.Commands.CreateBrewery;
     using Domain.Dtos;
     using Domain.Dtos.Brewery;
+    using Domain.Media;
     using Shouldly;
     using Xunit;
 
@@ -14,6 +15,7 @@ namespace Dappery.Core.Tests.Breweries
         public async Task CreateBreweryCommandHandler_GivenAValidRequest_CreatesBrewery()
         {
             // Arrange
+            using var unitOfWork = UnitOfWork;
             var createBreweryDto = new CreateBreweryDto
             {
                 Name = "Pizza Port Brewing Company",
@@ -27,20 +29,21 @@ namespace Dappery.Core.Tests.Breweries
             };
 
             // Act
-            var handler = new CreateBreweryCommandHandler(UnitOfWork);
+            var handler = new CreateBreweryCommandHandler(unitOfWork);
             var createdBrewery = await handler.Handle(new CreateBreweryCommand(createBreweryDto), CancellationToken.None);
 
             // Assert
             createdBrewery.ShouldNotBeNull();
+            createdBrewery.ShouldBeOfType<BreweryResource>();
             createdBrewery.Self.ShouldNotBeNull();
             createdBrewery.Self.ShouldBeOfType<BreweryDto>();
             createdBrewery.Self.Name.ShouldNotBeNull();
             createdBrewery.Self.Name.ShouldBe(createBreweryDto.Name);
-            createdBrewery.Self.Address.ShouldNotBeNull();
-            createdBrewery.Self.Address.City.ShouldBe(createBreweryDto.Address.City);
-            createdBrewery.Self.Address.State.ShouldBe(createBreweryDto.Address.State);
-            createdBrewery.Self.Address.StreetAddress.ShouldBe(createBreweryDto.Address.StreetAddress);
-            createdBrewery.Self.Address.ZipCode.ShouldBe(createBreweryDto.Address.ZipCode);
+            createdBrewery.Self.Address?.ShouldNotBeNull();
+            createdBrewery.Self.Address?.City.ShouldBe(createBreweryDto.Address?.City);
+            createdBrewery.Self.Address?.State.ShouldBe(createBreweryDto.Address?.State);
+            createdBrewery.Self.Address?.StreetAddress.ShouldBe(createBreweryDto.Address?.StreetAddress);
+            createdBrewery.Self.Address?.ZipCode.ShouldBe(createBreweryDto.Address?.ZipCode);
             createdBrewery.Self.Beers.ShouldBeEmpty();
             createdBrewery.Self.BeerCount.ShouldBe(0);
         }

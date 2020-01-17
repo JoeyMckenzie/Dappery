@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>8.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
+    </PropertyGroup>
+</Project>
