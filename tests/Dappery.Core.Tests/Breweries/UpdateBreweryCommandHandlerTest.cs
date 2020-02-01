@@ -19,7 +19,6 @@ namespace Dappery.Core.Tests.Breweries
             const int breweryId = 1;
             var updateCommand = new UpdateBreweryCommand(new UpdateBreweryDto
             {
-                Id = breweryId,
                 Address = new AddressDto
                 {
                     City = "Updated City",
@@ -55,7 +54,6 @@ namespace Dappery.Core.Tests.Breweries
             const int breweryId = 11;
             var updateCommand = new UpdateBreweryCommand(new UpdateBreweryDto
             {
-                Id = breweryId,
                 Address = new AddressDto
                 {
                     City = "Doesn't Exist!",
@@ -83,7 +81,6 @@ namespace Dappery.Core.Tests.Breweries
             const int breweryId = 1;
             var updateCommand = new UpdateBreweryCommand(new UpdateBreweryDto
             {
-                Id = breweryId,
                 Name = "Cedar Crest Brewery"
             }, breweryId);
             

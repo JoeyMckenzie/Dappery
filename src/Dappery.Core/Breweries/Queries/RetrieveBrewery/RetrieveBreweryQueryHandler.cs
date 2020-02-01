@@ -1,5 +1,3 @@
-using Dappery.Core.Extensions;
-
 namespace Dappery.Core.Breweries.Queries.RetrieveBrewery
 {
     using System.Net;
@@ -8,6 +6,7 @@ namespace Dappery.Core.Breweries.Queries.RetrieveBrewery
     using Data;
     using Domain.Media;
     using Exceptions;
+    using Extensions;
     using MediatR;
 
     public class RetrieveBreweryQueryHandler : IRequestHandler<RetrieveBreweryQuery, BreweryResource>

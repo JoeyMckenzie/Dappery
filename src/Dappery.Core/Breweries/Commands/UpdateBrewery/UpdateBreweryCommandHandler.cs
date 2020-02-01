@@ -31,12 +31,12 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
             
             // Update the properties on the brewery entity
             breweryToUpdate.Name = request.Dto.Name;
-            var updateBrewery = false;
+            var updateBreweryAddress = false;
 
             // If the request contains an address, set the flag for the persistence layer to update the address table
             if (request.Dto.Address != null && breweryToUpdate.Address != null)
             {
-                updateBrewery = true;
+                updateBreweryAddress = true;
                 breweryToUpdate.Address.StreetAddress = request.Dto.Address.StreetAddress;
                 breweryToUpdate.Address.City = request.Dto.Address.City;
                 breweryToUpdate.Address.State = request.Dto.Address.State;
@@ -44,7 +44,7 @@ namespace Dappery.Core.Breweries.Commands.UpdateBrewery
             }
             
             // Update the brewery in the database, retrieve it, and clean up our resources
-            await _unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, cancellationToken, updateBrewery);
+            await _unitOfWork.BreweryRepository.UpdateBrewery(breweryToUpdate, cancellationToken, updateBreweryAddress);
             var updatedBrewery = await _unitOfWork.BreweryRepository.GetBreweryById(request.BreweryId, cancellationToken);
             _unitOfWork.Commit();
             
